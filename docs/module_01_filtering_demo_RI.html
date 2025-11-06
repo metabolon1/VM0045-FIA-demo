@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Taylan Morcol">
+<meta name="dcterms.date" content="2025-11-05">
+
+<title>MODULE 01 - Filtering FIA plots for VM0045 donor pool</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Module_01_filtering_demo_RI_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Module_01_filtering_demo_RI_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="Module_01_filtering_demo_RI_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="Module_01_filtering_demo_RI_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="Module_01_filtering_demo_RI_files/libs/quarto-html/popper.min.js"></script>
+<script src="Module_01_filtering_demo_RI_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Module_01_filtering_demo_RI_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Module_01_filtering_demo_RI_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Module_01_filtering_demo_RI_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Module_01_filtering_demo_RI_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Module_01_filtering_demo_RI_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Module_01_filtering_demo_RI_files/libs/bootstrap/bootstrap-6891e4d11ea07b14b17919405f4d5902.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">MODULE 01 - Filtering FIA plots for VM0045 donor pool</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Taylan Morcol </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 5, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="summary" class="level1">
+<h1>—SUMMARY—</h1>
+<p>In this first module, I demonstrate a partial approach to filtering FIA plots to serve as an IFM project baseline. I say partial, because the full filtering procedure also requires information about forest monitoring plots <em>within</em> the IFM treatment area (i.e., the sample unit). But in this module, no sample units are designated. Thus, this module approximates how someone might explore where to locate an IFM project.</p>
+<p>I demonstrate this using data from Rhode Island. I chose Rhode Island for ease of data processing and memory management, since it’s the smallest US state. But, as we’ll see towards the end of this module, such a geographic restriction is not in compliance with the VM0045 (version 1.2) methodology. Nonetheless, this geographic choice still illustrates some key aspects of the methodology.</p>
+</section>
+<section id="r-pipeline" class="level1">
+<h1>—R PIPELINE—</h1>
+<section id="load-packages" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages">Load packages</h2>
+<p>This pipeline makes use of the following packages:</p>
+<ul>
+<li><p><code>rFIA</code> for downloading data from FIADB (the public USFS FIA database) and performing carbon calculations</p></li>
+<li><p><code>dplyr</code> &amp; <code>tidyr</code> for data manipulation and management</p></li>
+<li><p><code>ggplot2</code> for plotting</p></li>
+<li><p><code>maps</code> for drawing state boundaries</p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rFIA)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maps)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="download-data-from-fiadb" class="level2">
+<h2 class="anchored" data-anchor-id="download-data-from-fiadb">Download data from FIADB</h2>
+<p>By default, the function <code>rFIA::getFIA()</code> downloads FIA data directly into RAM. This is a practical approach when working with small datasets, such as the Rhode Island dataset. The approach changes when dealing with larger datasets, which will be addressed in the next module. (see <a href="https://doserlab.com/files/rfia/articles/bigdata">here</a> for more info about dealing with big data in rFIA).</p>
+<p>We also download the reference tables, which will come into play later. <code>getFIA()</code> will not download state data and reference tables in the same call, so they are done separately and stored in separate objects.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># long-running data download / wrangling code here</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># get raw data from FIADB (RI - 9.3 MB)</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>FIADB <span class="ot">&lt;-</span> <span class="fu">getFIA</span>(<span class="st">"RI"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># get reference tables from FIADB (4.3 MB)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>REF <span class="ot">&lt;-</span> <span class="fu">getFIA</span>(<span class="st">"REF"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="calculate-carbon-per-acre-at-the-plot-level" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-carbon-per-acre-at-the-plot-level">Calculate carbon per acre at the plot level</h2>
+<p>This step is one of the main reasons for using <code>rFIA</code> in the first place: <code>carbon()</code> calculates the carbon/acre (in metric tonnes/ac) for each plot <em>visit</em>. In other words, each row corresponds to a separate visit, such that a plot sampled at multiple times will have multiple rows of data.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">&lt;-</span> <span class="fu">carbon</span>(<span class="at">db =</span> FIADB,     <span class="co"># object in which raw FIADB data are stored</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>             <span class="at">byPlot =</span> <span class="cn">TRUE</span>,  <span class="co"># perform calculations at the per-plot level</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">byPool =</span> <span class="cn">FALSE</span>) <span class="co"># do NOT split carbon calcs by IPCC forest carbon pool (default is TRUE)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(cc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>tibble [483 × 5] (S3: tbl_df/tbl/data.frame)
+ $ PLT_CN     : num [1:483] 5.59e+13 5.59e+13 5.59e+13 5.59e+13 5.59e+13 ...
+ $ YEAR       : int [1:483] 2003 2003 2003 2003 2003 2003 2003 2003 2003 2003 ...
+ $ pltID      : chr [1:483] "1_44_3_84" "1_44_3_190" "1_44_3_144" "1_44_3_58" ...
+ $ CARB_ACRE  : num [1:483] 130.2 115.6 52.5 111.6 75.3 ...
+ $ PROP_FOREST: num [1:483] 1 1 0.5 1 1 0.75 0.75 0.25 1 1 ...</code></pre>
+</div>
+</div>
+<p>We can see from the output above that <code>cc</code> is a tibble with 5 columns. Of note is the column PLT_CN, which contains a unique identifier for each plot visit. For any given FIA plot, each sampling visit is assigned a unique PLT_CN, such that the same plot can and usually does have multiple PLT_CN’s associated with it.</p>
+<p>PLT_CN is an important key that allows us to join data across many FIADB tables. In some tables, such as PLOT, this identifier is called CN instead of PLT_CN, but it’s the same thing.</p>
+</section>
+<section id="join-filtering-variablesmetadata-to-carbon-table" class="level2">
+<h2 class="anchored" data-anchor-id="join-filtering-variablesmetadata-to-carbon-table">Join filtering variables/metadata to carbon table</h2>
+<p>The variables used for filtering are found across three different FIADB tables: PLOTGEOM, COND, and PLOT. As far as I know, the <code>carbon()</code> function does not have a way to include these variables in its output. Therefore, it’s necessary to join these variables in separately. Thankfully, the <code>FIADB</code> object already contains the three necessary tables.</p>
+<p>NOTE: all variables listed in the subsections below are directly used for filtering or joining, unless otherwise specified.</p>
+<section id="plotgeom-variables" class="level3">
+<h3 class="anchored" data-anchor-id="plotgeom-variables">PLOTGEOM variables</h3>
+<p>From PLOTGEOM (i.e., plot geometry table), we get <code>ECOSUBCD</code>, the ecological subsection code, which we then use to derive ecological section. See <a href="https://doi.org/10.2737/WO-GTR-76D">Cleland <em>et al.</em>, 2007</a> for more details on these codes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># metadata from PLOTGEOM table</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pg_meta <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>PLOTGEOM <span class="sc">%&gt;%</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">select</span>(<span class="at">PLT_CN =</span> CN, <span class="co"># join key</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                  ECOSUBCD) <span class="sc">%&gt;%</span> <span class="co"># ecological subsection (to derive section and province)</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>           <span class="fu">mutate</span>(<span class="at">eco_section =</span> <span class="fu">sub</span>(<span class="st">"[a-z]$"</span>, <span class="st">""</span>, ECOSUBCD)) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>           <span class="fu">tibble</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="cond-variables" class="level3">
+<h3 class="anchored" data-anchor-id="cond-variables">COND variables</h3>
+<p>COND (i.e., condition table) contains four variables of interest:</p>
+<ol type="1">
+<li><p><code>STDORGCD</code>: stand origin code, which indicates whether the method of stand regeneration is natural or artificial.</p></li>
+<li><p><code>FORTYPCD</code>: forest type code, which is assigns a category based on dominant woody vegetation (e.g., “Sugar maple / beech / yellow birch”).</p></li>
+<li><p><code>OWNGRPCD</code>: owner group code, which assigns one of four land ownership types: Forest Service; Other Federal; State/local government; or Private. This variable is not directly used for filtering, but is rather used to derive a more general, binary land ownership class–public or private–as defined in <a href="https://verra.org/wp-content/uploads/2025/07/VM0045_IFM_v1.2_07102025_clean.pdf">VM0045, v1.2</a> (p.&nbsp;58).</p></li>
+<li><p><code>CONDPROP_UNADJ</code>: unadjusted proportion of plot in given condition. Values range (0, 1].</p></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># metadata from COND table</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cond_meta <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>COND <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>             <span class="fu">select</span>(PLT_CN, <span class="co"># join key</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    STDORGCD, <span class="co"># stand origin category</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                    FORTYPCD, <span class="co"># forest type</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                    OWNGRPCD, <span class="co"># owner group (to derive public/private attribute)</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                    CONDPROP_UNADJ) <span class="sc">%&gt;%</span> <span class="co"># unadjusted condition proportion of plot</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>             <span class="co"># derive ownership_class, as defined in VM0045 v1.2</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>             <span class="fu">mutate</span>(<span class="at">ownership_class =</span> <span class="fu">case_when</span>(OWNGRPCD <span class="sc">==</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">"Private"</span>, </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                                                OWNGRPCD <span class="sc">&lt;</span> <span class="dv">40</span> <span class="sc">~</span> <span class="st">"Public"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>             <span class="fu">tibble</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="plot-variables" class="level3">
+<h3 class="anchored" data-anchor-id="plot-variables">PLOT variables</h3>
+<p>PLOT (i.e., the plot table) has several variables of interest:</p>
+<ol type="1">
+<li><p><code>CYCLE</code>: inventory cycle number, assigned to a set of plots measured over a particular time.</p></li>
+<li><p><code>MEASYEAR</code> / <code>MEASMON</code> / <code>MEASDAY</code>: the year, month, and day that plot measurements were taken. Used to derive measurement date, which is used for filtering.</p></li>
+<li><p><code>KINDCD</code>: code indicating whether a plot visit was a remeasurement, new installation, replacement, etc.</p></li>
+<li><p><code>LAT</code> / <code>LON</code>: latitude and longitude. While these are not used for filtering in this module, they are used for mapping.</p></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># metadata from PLOT table</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>plot_meta <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>PLOT <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>             <span class="fu">select</span>(<span class="at">PLT_CN =</span> CN, <span class="co"># join key </span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                    CYCLE, MEASYEAR, MEASMON, MEASDAY, <span class="co"># time variables</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                    LAT, LON, <span class="co"># geo variables (for mapping)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                    KINDCD) <span class="sc">%&gt;%</span> <span class="co"># sample kind code</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>             <span class="co"># create new column for measurement date      </span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>             <span class="fu">mutate</span>(<span class="at">meas_date =</span> <span class="fu">as.Date</span>(<span class="fu">paste</span>(MEASYEAR, MEASMON, MEASDAY, <span class="at">sep=</span><span class="st">"-"</span>),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                                        <span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>             <span class="fu">tibble</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="join-variables-to-carbon-table" class="level3">
+<h3 class="anchored" data-anchor-id="join-variables-to-carbon-table">Join variables to carbon table</h3>
+<p>After having gathered the filtering variables, we join them to the table containing carbon/acre values. Inner joins are used throughout, because all PLT_CN’s carried forward need to have a full set of filtering variables.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># join all the metadata to the main table</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: using inner joins, because all metadata required for filtering/matching</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>cc_m <span class="ot">&lt;-</span> pg_meta <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">inner_join</span>(cond_meta, <span class="at">by =</span> <span class="st">"PLT_CN"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">inner_join</span>(plot_meta, <span class="at">by =</span> <span class="st">"PLT_CN"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">inner_join</span>(cc, <span class="at">by =</span> <span class="st">"PLT_CN"</span>)   </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="donor-pool-selection-filtering-fia-plot-visits" class="level2">
+<h2 class="anchored" data-anchor-id="donor-pool-selection-filtering-fia-plot-visits">Donor pool selection: filtering FIA plot visits</h2>
+<p>Section A1.5.1 of the <a href="https://verra.org/wp-content/uploads/2025/07/VM0045_IFM_v1.2_07102025_clean.pdf">VM0045 documentation</a> describes a set of criteria that an FIA plot must meet to be eligible for the donor pool. The donor pool is the set of all FIA plots to be considered for inclusion in the composite baseline for a given sample unit. The composite baseline is a subset of plots (i.e., constituent baseline plots) from the donor pool that represent the baseline scenario. In other words, the composite baseline is used as a control against which carbon changes in the sample units are compared. And the sample unit is a representative forest inventory plot within an IFM treatment area that will be used for monitoring changes in carbon over time.</p>
+<p>Each of the donor pool eligibility criteria correspond to a filter that can be performed using variables joined earlier. I like to think of the filters in two groups (though such a distinction is not explicitly made in the VM0045 documentation):</p>
+<ul>
+<li><p><em>absolute criteria:</em> conditions that a plot must meet, irrespective of the sample unit’s attributes.</p></li>
+<li><p><em>relative criteria:</em> conditions that a plot must have in common with the sample unit.</p></li>
+</ul>
+<p>Because I have not designated a sample unit for this module, only the absolute filters can be applied. But after filtering by the absolute criteria, we’ll take a look at how the plot count breaks down across the relative filtering groups.</p>
+<section id="determine-most-recently-completed-re-measurement-cycle" class="level3">
+<h3 class="anchored" data-anchor-id="determine-most-recently-completed-re-measurement-cycle">Determine most recently completed re-measurement cycle</h3>
+<p>One of the selection criteria involves knowing the most recently completed re-measurement cycle. I have not found a systematic way to look this up in FIADB. So instead, let’s take a look at the contingency table of <code>CYCLE</code>.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manually inspect to determine latest COMPLETED cycle (for one of filters below)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(FIADB<span class="sc">$</span>PLOT<span class="sc">$</span>CYCLE)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  3   4   5   6   7   8 
+187 178 257 259 271 216 </code></pre>
+</div>
+</div>
+<p>As we can see above, the visit counts for cycles 5, 6, and 7 are all at least 257, while the count for cycle 8 is only 216 (substantially less). And there is no data for cycle 9. This suggests that cycle 8 has not yet completed.</p>
+<p>So, we will assume that the most recently completed cycle is cycle 7.</p>
+</section>
+<section id="apply-absolute-filters" class="level3">
+<h3 class="anchored" data-anchor-id="apply-absolute-filters">Apply absolute filters</h3>
+<p>We are now ready to apply the absolute filters to our dataset. These filters retain only:</p>
+<ul>
+<li><p>the most recent visit for each plot, using <code>PLT_CN</code> and <code>PREV_PLT_CN</code> (an extra variable from the PLOT table)</p></li>
+<li><p>visits for plots with multiple measurement cycles, using <code>KINDCD</code></p></li>
+<li><p>plots visited in the most recently completed measurement cycle, using <code>CYCLE</code></p></li>
+<li><p>visits completed within the last 10 years (as of 1-Nov-2025, our hypothetical sample unit establishment date), using <code>meas_date</code>. NOTE: this criterion is given in VM0045 v1.2, Section 6 rather than in Section A1.5.1.</p></li>
+<li><p>visits for which only single conditions were recorded, using <code>CONDPROP_UNADJ</code></p></li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>cc_mf <span class="ot">&lt;-</span> cc_m <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>         <span class="co"># retain only the most recent visit for each plot</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>         <span class="fu">filter</span>(<span class="sc">!</span>PLT_CN <span class="sc">%in%</span> <span class="fu">unique</span>(FIADB<span class="sc">$</span>PLOT<span class="sc">$</span>PREV_PLT_CN)) <span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="co"># retain only visits for which plot has at least 2 measurement cycles</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>         <span class="fu">filter</span>(KINDCD <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>         <span class="co">#retain only visits measured in most recently completed re-measurement cycle</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>         <span class="fu">filter</span>(CYCLE <span class="sc">&gt;=</span> <span class="dv">7</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>         <span class="co"># retain only visits completed within past 10 years</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>         <span class="fu">filter</span>(<span class="fu">as.Date</span> (<span class="st">"2025-11-01"</span>) <span class="sc">-</span> meas_date <span class="sc">&lt;=</span> <span class="dv">10</span> <span class="sc">*</span> <span class="fl">365.25</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>         <span class="co"># retain only plot visits for which entire plot is single condition</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>         <span class="fu">filter</span>(CONDPROP_UNADJ <span class="sc">==</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="validation" class="level3">
+<h3 class="anchored" data-anchor-id="validation">Validation</h3>
+<p>Let’s do some accounting to ensure valid data.</p>
+<p>First, we check for missing values. Any plot visits missing values from any of the filtering variables would be a reason to remove that plot from the donor pool. As seen below, this dataset has no missing/NA values.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check for NA values</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(cc_mf, <span class="at">FUN =</span> <span class="cf">function</span>(x){<span class="fu">sum</span>(<span class="fu">is.na</span>(x))})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         PLT_CN        ECOSUBCD     eco_section        STDORGCD        FORTYPCD 
+              0               0               0               0               0 
+       OWNGRPCD  CONDPROP_UNADJ ownership_class           CYCLE        MEASYEAR 
+              0               0               0               0               0 
+        MEASMON         MEASDAY             LAT             LON          KINDCD 
+              0               0               0               0               0 
+      meas_date            YEAR           pltID       CARB_ACRE     PROP_FOREST 
+              0               0               0               0               0 </code></pre>
+</div>
+</div>
+<p>Next, we compare the number of rows (i.e., unique plot visits) before and after filtering. As seen below, filtering reduced the number of plot visits in our dataset from 785 to 52. NOTE: these values may differ if this script is run at a later date.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare number of rows (i.e., unique plot visits)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(cc_m) <span class="co"># after joining metadata</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 785</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(cc_mf) <span class="co"># after filtering</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 52</code></pre>
+</div>
+</div>
+<p>Let’s also compare the number of unique plots before and after filtering. As seen below, there are 163 before and 52 after. Given that we have 52 unique visits and 52 unique plots means that each plot is represented only once. This is what we would expect from selecting only the most recent visit from each plot, as was done with one of the filters.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare number of unique plots</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(cc_m<span class="sc">$</span>pltID)) <span class="co"># after joining metadata</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 163</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(cc_mf<span class="sc">$</span>pltID)) <span class="co"># after filtering</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 52</code></pre>
+</div>
+</div>
+</section>
+<section id="a-simple-map" class="level3">
+<h3 class="anchored" data-anchor-id="a-simple-map">A simple map</h3>
+<p>Let’s see how the filtered set of plots looks on a simple map.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm general layout of plots</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cc_mf<span class="sc">$</span>LON, cc_mf<span class="sc">$</span>LAT, </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">asp =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">cos</span>(<span class="fu">mean</span>(cc_mf<span class="sc">$</span>LAT, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">*</span> pi<span class="sc">/</span><span class="dv">180</span>), <span class="co"># keeps aspect ratio consistent</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">pch =</span> <span class="dv">3</span>, <span class="at">ylab =</span> <span class="st">'latitude, degrees'</span>, <span class="at">xlab =</span> <span class="st">'longitude, degrees'</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co"># add state boundaries</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="st">"state"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Module_01_filtering_demo_RI_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:70.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The map has a few quirks. First, there is a plot near the bottom at -71.4 degrees longitude that appears to fall in water. But a comparison with <a href="https://maps.app.goo.gl/pTgqdhXBPVXxrKKp9">a more detailed map</a> of Rhode Island shows that there is actually an island in the middle of that body of water. The state boundary rendered by <code>map()</code> does not capture this island.</p>
+<p>Second, three plots appear to fall just outside the western border of Rhode Island. These are likely the result of coordinate “fuzzing”, a standard practice that obscures true FIA plot coordinates for privacy and plot integrity. In other words, the coordinates we’re working with are slightly offset from the true plot coordinates.</p>
+<p>Other than that, the map looks fairly straightforward. There is an area in the middle of the state devoid of fully forested plots, which is likely because that part of the state is relatively developed compared to the rest of the state.</p>
+</section>
+<section id="exploratory-data-analysis-eda-of-relative-filtering-groups" class="level3">
+<h3 class="anchored" data-anchor-id="exploratory-data-analysis-eda-of-relative-filtering-groups">Exploratory data analysis (EDA) of relative filtering groups</h3>
+<p>As mentioned earlier, since this module does not designate a sample unit, we cannot apply the relative filters to the donor pool. But it is still instructive to explore the grouping of plots across the relative filtering variables <code>STDORGCD</code>, <code>FORTYPCD</code>, <code>ownership_class</code>, and <code>eco_section</code>.</p>
+<p>First, let’s look at the unique values of each of these variables in our filtered dataset.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># unique values of each relative filtering variable</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>cc_mf <span class="sc">%&gt;%</span> <span class="fu">select</span>(STDORGCD, FORTYPCD, ownership_class, eco_section) <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>          <span class="fu">sapply</span>(<span class="at">FUN =</span> unique)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$STDORGCD
+[1] 0
+
+$FORTYPCD
+ [1] 519 510 503 103 608 505 809 962 520 401 502 515 801
+
+$ownership_class
+[1] "Public"  "Private"
+
+$eco_section
+[1] "221A"</code></pre>
+</div>
+</div>
+<p>We see that two of these four variables only have one unique value each, meaning that all plots are:</p>
+<ul>
+<li><p>naturally regenerated (<code>STDORGCD</code> = 0)</p></li>
+<li><p>found within the “Lower New England Section” of the “Eastern Broadlead Forest Province” (i.e., ecological section 221A)</p></li>
+</ul>
+<p>It’s not surprisingly that such a small land area would be so uniform in these respects.</p>
+<p>However, we see 13 distinct forest type codes (<code>FORTYPCD</code>) and two distinct <code>ownership_class</code> values. Let’s join the corresponding forest type names from one of the reference tables and construct a contingency table of the 4 variables to see the plot counts within each grouping.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>cc_mf <span class="sc">%&gt;%</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">left_join</span>(REF<span class="sc">$</span>REF_FOREST_TYPE, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"FORTYPCD"</span> <span class="ot">=</span> <span class="st">"VALUE"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(<span class="at">forest_type =</span> MEANING, ownership_class, STDORGCD, eco_section) <span class="sc">%&gt;%</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">table</span>() </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>, , STDORGCD = 0, eco_section = 221A
+
+                                                   ownership_class
+forest_type                                         Private Public
+  Chestnut oak                                            1      0
+  Chestnut oak / black oak / scarlet oak                  2      0
+  Eastern white pine                                      4      5
+  Eastern white pine / northern red oak / white ash       2      1
+  Mixed upland hardwoods                                  1      0
+  Northern red oak                                        2      3
+  Other hardwoods                                         1      0
+  Red maple / oak                                         3      1
+  Red maple / upland                                      1      1
+  Scarlet oak                                             1      4
+  Sugar maple / beech / yellow birch                      1      1
+  Sweetbay / swamp tupelo / red maple                     3      0
+  White oak / red oak / hickory                          10      4</code></pre>
+</div>
+</div>
+<p>The contingency table confirms that all plots share the same stand origin code (0) and ecological section code (221A). Further, we see that there are between 0 and 10 plots per <code>forest_type</code> x <code>ownership_class</code> grouping in our dataset.</p>
+<p>Remember, plots in the donor pool must have the same stand origin, ecological section, forest type, and ownership class as the corresponding sample unit. So, depending on where we want to locate our hypothetical IFM project in Rhode Island, we would have at most 10 FIA plots to choose from in the donor pool.</p>
+<p>However, per VM0045 section A1.5.1, a donor pool must contain at least 50 potential donor plots. So, the donor pools of Rhode Island FIA plots are all too small for our purposes.</p>
+<p>Section A.1.5.1b lists three steps that can be taken, one at a time, until the donor pool reaches at least 50 plots. But wait! We need to back up a step and consider an important detail of the donor pool selection rules: “plots must not be excluded on the basis of any criteria other than [the relative and absoulte filters outlined earlier].” There are no filters that allow for excluding plots on the basis of state boundaries.</p>
+<p>As seen in the map below, ecological section 221A (comprising all subsections beginning with “221A”) extends well beyond Rhode Island.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./map_section221A_Cleland_modified.png" class="img-fluid figure-img"></p>
+<figcaption>Ecological section 221A (pink outline) comprises all subsections beginning with “221A”. Rhode Island is outlined in blue. Map excerpt from Cleland et al., (2007), https://doi.org/10.2737/WO-GTR-76D. Outlines added for clarity.</figcaption>
+</figure>
+</div>
+<p>So, to be in compliance with VM0045, we should expand our earlier call to <code>rFIA::carbon()</code> to include FIA plots from all states that intersect with ecological section 221A: Rhode Island, Connecticut, Massachusetts, New Hampshire, Maine, New York, New Jersey, and Pennsylvania. And then we would filter from there.</p>
+<p>As a side note, VM0045 (v1.2) section A1.5.1.a.ix does have an optional provision to further restrict the donor pool by geographic distance from the sample unit, provided this extra restriction can be justified. So, this is one allowable option for restricting the number of states.</p>
+<p>All that said, we’re not quite done with this dataset yet…</p>
+</section>
+<section id="exploring-effects-of-filters-on-distribution-of-carbonacre-data" class="level3">
+<h3 class="anchored" data-anchor-id="exploring-effects-of-filters-on-distribution-of-carbonacre-data">Exploring effects of filters on distribution of carbon/acre data</h3>
+<p>Let’s explore how filtering affects the distribution of carbon data by inspecting some histograms. Specifically, let’s see how each filter affects the carbon/acre data on it’s own.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a separate table for each filter applied individually</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>base     <span class="ot">&lt;-</span> cc_m</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>f_single <span class="ot">&lt;-</span> cc_m <span class="sc">%&gt;%</span> <span class="fu">filter</span>(CONDPROP_UNADJ <span class="sc">==</span> <span class="dv">1</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>f_kind2  <span class="ot">&lt;-</span> cc_m <span class="sc">%&gt;%</span> <span class="fu">filter</span>(KINDCD <span class="sc">==</span> <span class="dv">2</span>)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>f_latest <span class="ot">&lt;-</span> cc_m <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span>PLT_CN <span class="sc">%in%</span> <span class="fu">unique</span>(FIADB<span class="sc">$</span>PLOT<span class="sc">$</span>PREV_PLT_CN))</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>f_cycle7 <span class="ot">&lt;-</span> cc_m <span class="sc">%&gt;%</span> <span class="fu">filter</span>(CYCLE <span class="sc">&gt;=</span> <span class="dv">7</span>)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>f_recent <span class="ot">&lt;-</span> cc_m <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="fu">as.Date</span>(<span class="st">"2025-11-01"</span>) <span class="sc">-</span> meas_date <span class="sc">&lt;=</span> <span class="dv">10</span><span class="sc">*</span><span class="fl">365.25</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>final    <span class="ot">&lt;-</span> cc_mf</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>view <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  base     <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="st">"UNFILTERED"</span>),</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  f_single <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="st">"f_single_condition"</span>),</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  f_kind2  <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="st">"f_KINDCD_2"</span>),</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  f_latest <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="st">"f_latest_visit"</span>),</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>  f_cycle7 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="st">"f_CYCLE_7/8"</span>),</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>  f_recent <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="st">"f_recent_10yr"</span>),</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>  final    <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="st">"FULLY FILTERED"</span>)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">step =</span> <span class="fu">factor</span>(step, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"UNFILTERED"</span>,</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"f_single_condition"</span>,</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"f_KINDCD_2"</span>,</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"f_latest_visit"</span>,</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"f_CYCLE_7/8"</span>,</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"f_recent_10yr"</span>,</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"FULLY FILTERED"</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>  )))</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a><span class="do">## overlay data: filtered distribution, copied into each step</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>steps   <span class="ot">&lt;-</span> <span class="fu">levels</span>(view<span class="sc">$</span>step)</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>overlay <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(steps, <span class="cf">function</span>(s)</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>  final <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">step =</span> <span class="fu">factor</span>(s, <span class="at">levels =</span> steps))</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>  <span class="co"># background: each filter's own distribution</span></span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(</span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> view,</span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> CARB_ACRE),</span>
+<span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins  =</span> <span class="dv">30</span>,</span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill  =</span> <span class="st">"grey75"</span>,</span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"grey40"</span></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># overlay: fully filtered distribution, same in every panel</span></span>
+<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(</span>
+<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> overlay,</span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> CARB_ACRE),</span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">bins  =</span> <span class="dv">30</span>,</span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill  =</span> <span class="st">"red3"</span>,</span>
+<span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.5</span></span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> step, <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">scales =</span> <span class="st">"fixed"</span>) <span class="sc">+</span></span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"CARB_ACRE"</span>, <span class="at">y =</span> <span class="st">"count"</span>,</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Histograms of carbon/acre, with and without filters</span><span class="sc">\n</span><span class="st">(red = fully filtered)"</span>) <span class="sc">+</span></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Module_01_filtering_demo_RI_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The first and last histogram show the unfiltered and fully filtered data, respectively. The remaining histograms show the results of each filter applied <em>on its own</em> (rather than in sequence). The completely filtered histogram is overlayed across all histograms in red to more clearly show the effect of each filter relative to the final result.</p>
+<p>Three of the filters–latest visit, cycle 7/8, and within last 10 years–all seem to have similar distributions. This makes sense, since they are all selecting for recency. That said, the cycle 7/8 filter seems to be the least selective of the three.</p>
+<p>In comparison, the <code>KINDCD</code> = 2 filter is even less restrictive. By selecting for re-measurement visits, it’s including visits further back in time than any of the three recency filters above.</p>
+<p>The single condition filter behaves differently than the others. It preferentially selects plots with relatively high carbon/acre values. This makes sense. The earlier call to <code>rFIA::carbon()</code> selected only plots with at least one forested condition, via the default value to the (unspecified) <code>landType</code> argument. So, filtering the resulting dataset for single-condition plots guarantees that all of the remaining plots will be fully forested. And fully forested plots will generally have more carbon/acre.</p>
+<p>NOTE: regardless of any redundnacy among filters, they all need to be applied to stay in compliance with VM0045.</p>
+</section>
+</section>
+</section>
+<section id="final-thoughts" class="level1">
+<h1>—FINAL THOUGHTS—</h1>
+<p>In this module, we explored some aspects of the VM0045 donor pool selection methodology, using Rhode Island as an example. This process involved:</p>
+<ul>
+<li><p>downloading raw FIA data with <code>rFIA::getFIA()</code></p></li>
+<li><p>calculating carbon/acre on a per-plot basis using <code>rFIA::carbon()</code></p></li>
+<li><p>joining in filtering variables from various FIADB tables</p></li>
+<li><p>filtering the dataset based on these variables</p></li>
+</ul>
+<p>We saw that, after removing plots that did’t meet the absolute criteria, we were left with donor pools that were too small in any of the groupings by relative criteria. Furthermore, we discovered that excluding plots based on state boundaries alone is not in compliance with VM0045.</p>
+<p>We also saw the effects of each filter on the distribution of carbon/acre data.</p>
+<p>In the next module, we’ll designate a sample unit to see how the full donor pool selection process works and move on to the next step in the process: matching FIA plots to the sample unit to construct a composite baseline.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
