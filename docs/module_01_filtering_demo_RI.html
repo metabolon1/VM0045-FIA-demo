@@ -140,7 +140,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="download-data-from-fiadb" class="level2">
 <h2 class="anchored" data-anchor-id="download-data-from-fiadb">Download data from FIADB</h2>
-<p>By default, the function <code>rFIA::getFIA()</code> downloads FIA data directly into RAM. This is a practical approach when working with small datasets, such as the Rhode Island dataset. The approach changes when dealing with larger datasets, which will be addressed in the next module. (see <a href="https://doserlab.com/files/rfia/articles/bigdata">here</a> for more info about dealing with big data in rFIA).</p>
+<p>By default, the function <code>rFIA::getFIA()</code> downloads FIA data directly into RAM. This is a practical approach when working with small datasets, such as the Rhode Island dataset. The approach changes when dealing with larger datasets, which will be addressed in a future module. (see <a href="https://doserlab.com/files/rfia/articles/bigdata">here</a> for more info about dealing with big data in rFIA).</p>
 <p>We also download the reference tables, which will come into play later. <code>getFIA()</code> will not download state data and reference tables in the same call, so they are done separately and stored in separate objects.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># long-running data download / wrangling code here</span></span>
@@ -515,7 +515,7 @@ forest_type                                         Private Public
 </ul>
 <p>We saw that, after removing plots that did’t meet the absolute criteria, we were left with donor pools that were too small in any of the groupings by relative criteria. Furthermore, we discovered that excluding plots based on state boundaries alone is not in compliance with VM0045.</p>
 <p>We also saw the effects of each filter on the distribution of carbon/acre data.</p>
-<p>In the next module, we’ll designate a sample unit to see how the full donor pool selection process works and move on to the next step in the process: matching FIA plots to the sample unit to construct a composite baseline.</p>
+<p>In a future module, we’ll designate a sample unit to see how the full donor pool selection process works and move on to the next step in the process: matching FIA plots to the sample unit to construct a composite baseline.</p>
 <p><a href="index.html">← Back to module index</a></p>
 </section>
 

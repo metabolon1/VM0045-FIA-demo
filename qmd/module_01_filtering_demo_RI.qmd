@@ -38,7 +38,7 @@ library(maps)
 ```
 
 ## Download data from FIADB
-By default, the function `rFIA::getFIA()` downloads FIA data directly into RAM. This is a practical approach when working with small datasets, such as the Rhode Island dataset. The approach changes when dealing with larger datasets, which will be addressed in the next module. (see [here](https://doserlab.com/files/rfia/articles/bigdata) for more info about dealing with big data in rFIA).
+By default, the function `rFIA::getFIA()` downloads FIA data directly into RAM. This is a practical approach when working with small datasets, such as the Rhode Island dataset. The approach changes when dealing with larger datasets, which will be addressed in a future module. (see [here](https://doserlab.com/files/rfia/articles/bigdata) for more info about dealing with big data in rFIA).
 
 We also download the reference tables, which will come into play later. `getFIA()` will not download state data and reference tables in the same call, so they are done separately and stored in separate objects.
 
@@ -375,6 +375,6 @@ We saw that, after removing plots that did't meet the absolute criteria, we were
 
 We also saw the effects of each filter on the distribution of carbon/acre data.
 
-In the next module, we'll designate a sample unit to see how the full donor pool selection process works and move on to the next step in the process: matching FIA plots to the sample unit to construct a composite baseline.
+In a future module, we'll designate a sample unit to see how the full donor pool selection process works and move on to the next step in the process: matching FIA plots to the sample unit to construct a composite baseline.
 
 [← Back to module index](index.html)

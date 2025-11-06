@@ -9,7 +9,6 @@ In addition, this is only a demonstration project. In a real IFM project, one wo
 Thus, this demo is meant to illustrate how one might carry out certain aspects of the VM0045 process.
 
 ## Directory structure
-- **/docs/**: all `.html` files rendered from source files (more reading-friendly versions of the modules)
-- **/qmd/**: all `.qmd` source files (more technical versions of the modules)
+- **/docs/**: all files for GitHub webpage (including images referenced in `.qmd files`)
+- **/qmd/**: all `.qmd` source files
 - **/references/**: literature references related to modules
-- **/images/**: images
