@@ -281,7 +281,7 @@ Section A.1.5.1b lists three steps that can be taken, one at a time, until the d
 
 As seen in the map below, ecological section 221A (comprising all subsections beginning with "221A") extends well beyond Rhode Island.
 
-![Ecological section 221A (pink outline) comprises all subsections beginning with "221A". Rhode Island is outlined in blue. Map excerpt from Cleland et al., (2007), https://doi.org/10.2737/WO-GTR-76D. Outlines added for clarity.](../images/map_section221A_Cleland_modified.png)
+![Ecological section 221A (pink outline) comprises all subsections beginning with "221A". Rhode Island is outlined in blue. Map excerpt from Cleland et al., (2007), https://doi.org/10.2737/WO-GTR-76D. Outlines added for clarity.](/images/map_section221A_Cleland_modified.png)
 
 So, to be in compliance with VM0045, we should expand our earlier call to `rFIA::carbon()` to include FIA plots from all states that intersect with ecological section 221A: Rhode Island, Connecticut, Massachusetts, New Hampshire, Maine, New York, New Jersey, and Pennsylvania. And then we would filter from there.
 
