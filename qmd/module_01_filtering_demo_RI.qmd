@@ -6,11 +6,13 @@ author:
     google_scholar: https://scholar.google.com/citations?user=OAvldLMAAAAJ&hl=en
     website: https://morcol.com 
 format: html
-output-dir: ../docs
+output-dir: /docs
 output-file: module_01_filtering_demo_RI.html
 ---
 
 [← Back to module index](index.html)
+
+**Disclaimer:** This material was prepared on my own personal time and is offered in my personal capacity only. It does not represent the views of, nor is it endorsed by, any current or past employer.
 
 # ---SUMMARY---
 In this first module, I demonstrate a partial approach to filtering FIA plots to serve as an IFM project baseline. I say partial, because the full filtering procedure also requires information about forest monitoring plots _within_ the IFM treatment area (i.e., the sample unit). But in this module, no sample units are designated. Thus, this module approximates how someone might explore where to locate an IFM project.

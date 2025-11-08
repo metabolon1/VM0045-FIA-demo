@@ -1,7 +1,7 @@
 ---
 title: "VM0045 FIA demo modules"
 format: html
-output-dir: ../docs
+output-dir: /docs
 ---
 
 This site hosts demonstration modules showing how US Forest Service Forest
@@ -16,7 +16,15 @@ Forest Management (IFM) methodology (version 1.2).
   - [Module 02 – Title goes here](modules/module_02_something.html)
   -->
 
-# Repository
+# Links
 
 Repository: <https://github.com/TaylanMorcol/VM0045-FIA-demo>
 
+Personal webpage: <https://morcol.com>
+
+LinkedIn: <https://www.linkedin.com/in/taylan-morcol>
+
+Google Scholar: <https://scholar.google.com/citations?user=OAvldLMAAAAJ&hl=en>
+
+# Disclaimer
+This material was prepared on my own personal time and is offered in my personal capacity only. It does not represent the views of, nor is it endorsed by, any current or past employer.
