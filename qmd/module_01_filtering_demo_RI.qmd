@@ -5,8 +5,8 @@ author:
   - name: Taylan Morcol
     google_scholar: https://scholar.google.com/citations?user=OAvldLMAAAAJ&hl=en
     website: https://morcol.com 
+    linkedin: https://www.linkedin.com/in/taylan-morcol
 format: html
-output-dir: /docs
 output-file: module_01_filtering_demo_RI.html
 ---
 

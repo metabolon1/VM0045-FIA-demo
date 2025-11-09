@@ -58,3 +58,8 @@ rsconnect/
 .quarto/
 **/*.quarto_ipynb
 _quarto.yml
+
+/.quarto/
+
+# avoid uploading large data files to repo
+/data/
