@@ -62,4 +62,4 @@ _quarto.yml
 /.quarto/
 
 # avoid uploading large data files to repo
-/data/
+/data/raw/

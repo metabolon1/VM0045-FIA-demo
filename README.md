@@ -8,7 +8,9 @@ In addition, this is only a demonstration project. In a real IFM project, one wo
 
 Thus, this demo is meant to illustrate how one might carry out certain aspects of the VM0045 process.
 
+HTML versions of the modules can be found [here](https://taylanmorcol.github.io/VM0045-FIA-demo/).
+
 ## Directory structure
 - **/docs/**: all files for GitHub webpage (including images referenced in `.qmd files`)
 - **/qmd/**: all `.qmd` source files
-- **/references/**: literature references related to modules
+- **/refs/**: literature references related to modules
