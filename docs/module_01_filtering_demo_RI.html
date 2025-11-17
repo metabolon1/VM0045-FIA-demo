@@ -76,10 +76,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </head>
 
-<body class="fullcontent quarto-light">
+<body class="quarto-light">
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">—INTRODUCTION—</a></li>
+  <li><a href="#r-pipeline" id="toc-r-pipeline" class="nav-link" data-scroll-target="#r-pipeline">—R PIPELINE—</a>
+  <ul class="collapse">
+  <li><a href="#load-packages" id="toc-load-packages" class="nav-link" data-scroll-target="#load-packages">Load packages</a></li>
+  <li><a href="#download-data-from-fiadb" id="toc-download-data-from-fiadb" class="nav-link" data-scroll-target="#download-data-from-fiadb">Download data from FIADB</a></li>
+  <li><a href="#calculate-carbon-per-acre-at-the-plot-level" id="toc-calculate-carbon-per-acre-at-the-plot-level" class="nav-link" data-scroll-target="#calculate-carbon-per-acre-at-the-plot-level">Calculate carbon per acre at the plot level</a></li>
+  <li><a href="#join-filtering-variablesmetadata-to-carbon-table" id="toc-join-filtering-variablesmetadata-to-carbon-table" class="nav-link" data-scroll-target="#join-filtering-variablesmetadata-to-carbon-table">Join filtering variables/metadata to carbon table</a>
+  <ul class="collapse">
+  <li><a href="#plotgeom-variables" id="toc-plotgeom-variables" class="nav-link" data-scroll-target="#plotgeom-variables">PLOTGEOM variables</a></li>
+  <li><a href="#cond-variables" id="toc-cond-variables" class="nav-link" data-scroll-target="#cond-variables">COND variables</a></li>
+  <li><a href="#plot-variables" id="toc-plot-variables" class="nav-link" data-scroll-target="#plot-variables">PLOT variables</a></li>
+  <li><a href="#join-variables-to-carbon-table" id="toc-join-variables-to-carbon-table" class="nav-link" data-scroll-target="#join-variables-to-carbon-table">Join variables to carbon table</a></li>
+  </ul></li>
+  <li><a href="#donor-pool-selection-filtering-fia-plot-visits" id="toc-donor-pool-selection-filtering-fia-plot-visits" class="nav-link" data-scroll-target="#donor-pool-selection-filtering-fia-plot-visits">Donor pool selection: filtering FIA plot visits</a>
+  <ul class="collapse">
+  <li><a href="#determine-most-recently-completed-re-measurement-cycle" id="toc-determine-most-recently-completed-re-measurement-cycle" class="nav-link" data-scroll-target="#determine-most-recently-completed-re-measurement-cycle">Determine most recently completed re-measurement cycle</a></li>
+  <li><a href="#apply-absolute-filters" id="toc-apply-absolute-filters" class="nav-link" data-scroll-target="#apply-absolute-filters">Apply absolute filters</a></li>
+  <li><a href="#validation" id="toc-validation" class="nav-link" data-scroll-target="#validation">Validation</a></li>
+  <li><a href="#a-simple-map" id="toc-a-simple-map" class="nav-link" data-scroll-target="#a-simple-map">A simple map</a></li>
+  <li><a href="#exploratory-data-analysis-eda-of-relative-filtering-groups" id="toc-exploratory-data-analysis-eda-of-relative-filtering-groups" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda-of-relative-filtering-groups">Exploratory data analysis (EDA) of relative filtering groups</a></li>
+  <li><a href="#exploring-effects-of-filters-on-distribution-of-carbonacre-data" id="toc-exploring-effects-of-filters-on-distribution-of-carbonacre-data" class="nav-link" data-scroll-target="#exploring-effects-of-filters-on-distribution-of-carbonacre-data">Exploring effects of filters on distribution of carbon/acre data</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">—CONCLUSION—</a></li>
+  </ul>
+</nav>
+</div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
@@ -115,8 +146,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p><a href="index.html">← Back to module index</a></p>
 <p><strong>Disclaimer:</strong> This material was prepared on my own personal time and is offered in my personal capacity only. It does not represent the views of, nor is it endorsed by, any current or past employer.</p>
-<section id="summary" class="level1">
-<h1>—SUMMARY—</h1>
+<section id="introduction" class="level1">
+<h1>—INTRODUCTION—</h1>
 <p>In this first module, I demonstrate a partial approach to filtering FIA plots to serve as an IFM project baseline. I say partial, because the full filtering procedure also requires information about forest monitoring plots <em>within</em> the IFM treatment area (i.e., the sample unit). But in this module, no sample units are designated. Thus, this module approximates how someone might explore where to locate an IFM project.</p>
 <p>I demonstrate this using data from Rhode Island. I chose Rhode Island for ease of data processing and memory management, since it’s the smallest US state. But, as we’ll see towards the end of this module, such a geographic restriction is not in compliance with the VM0045 (version 1.2) methodology. Nonetheless, this geographic choice still illustrates some key aspects of the methodology.</p>
 </section>
@@ -505,8 +536,8 @@ forest_type                                         Private Public
 </section>
 </section>
 </section>
-<section id="final-thoughts" class="level1">
-<h1>—FINAL THOUGHTS—</h1>
+<section id="conclusion" class="level1">
+<h1>—CONCLUSION—</h1>
 <p>In this module, we explored some aspects of the VM0045 donor pool selection methodology, using Rhode Island as an example. This process involved:</p>
 <ul>
 <li><p>downloading raw FIA data with <code>rFIA::getFIA()</code></p></li>
@@ -609,6 +640,11 @@ forest_type                                         Private Public
           if (link.dataset.originalHref !== undefined) {
             link.href = link.dataset.originalHref;
           }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
         }
       }
     function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {

@@ -7,14 +7,16 @@ author:
     website: https://morcol.com 
     linkedin: https://www.linkedin.com/in/taylan-morcol
 format: html
+link-external-newwindow: true
 output-file: module_01_filtering_demo_RI.html
+toc: true
 ---
 
 [← Back to module index](index.html)
 
 **Disclaimer:** This material was prepared on my own personal time and is offered in my personal capacity only. It does not represent the views of, nor is it endorsed by, any current or past employer.
 
-# ---SUMMARY---
+# ---INTRODUCTION---
 In this first module, I demonstrate a partial approach to filtering FIA plots to serve as an IFM project baseline. I say partial, because the full filtering procedure also requires information about forest monitoring plots _within_ the IFM treatment area (i.e., the sample unit). But in this module, no sample units are designated. Thus, this module approximates how someone might explore where to locate an IFM project.
 
 I demonstrate this using data from Rhode Island. I chose Rhode Island for ease of data processing and memory management, since it's the smallest US state. But, as we'll see towards the end of this module, such a geographic restriction is not in compliance with the VM0045 (version 1.2) methodology. Nonetheless, this geographic choice still illustrates some key aspects of the methodology.
@@ -362,7 +364,7 @@ The single condition filter behaves differently than the others. It preferential
 
 NOTE: regardless of any redundnacy among filters, they all need to be applied to stay in compliance with VM0045.
 
-# ---FINAL THOUGHTS---
+# ---CONCLUSION---
 In this module, we explored some aspects of the VM0045 donor pool selection methodology, using Rhode Island as an example. This process involved: 
 
 - downloading raw FIA data with `rFIA::getFIA()`

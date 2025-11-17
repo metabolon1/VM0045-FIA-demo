@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Taylan Morcol">
+<meta name="dcterms.date" content="2025-11-16">
+
+<title>MODULE 2A - Loblolly pine forests: Data management &amp; filtering</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/clipboard/clipboard.min.js"></script>
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/popper.min.js"></script>
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/anchor.min.js"></script>
+<link href="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="module_02A_Loblolly_DataMgmt_filtering_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="module_02A_Loblolly_DataMgmt_filtering_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="module_02A_Loblolly_DataMgmt_filtering_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="module_02A_Loblolly_DataMgmt_filtering_files/libs/bootstrap/bootstrap-6891e4d11ea07b14b17919405f4d5902.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">—INTRODUCTION—</a>
+  <ul class="collapse">
+  <li><a href="#dr.-kincaids-169-laptop-challenge" id="toc-dr.-kincaids-169-laptop-challenge" class="nav-link" data-scroll-target="#dr.-kincaids-169-laptop-challenge">Dr.&nbsp;Kincaid’s $169 laptop challenge</a></li>
+  </ul></li>
+  <li><a href="#r-pipeline" id="toc-r-pipeline" class="nav-link" data-scroll-target="#r-pipeline">—R PIPELINE—</a>
+  <ul class="collapse">
+  <li><a href="#load-packages" id="toc-load-packages" class="nav-link" data-scroll-target="#load-packages">Load packages</a></li>
+  <li><a href="#download-data-from-fiadb" id="toc-download-data-from-fiadb" class="nav-link" data-scroll-target="#download-data-from-fiadb">Download data from FIADB</a></li>
+  <li><a href="#determine-necessary-columns" id="toc-determine-necessary-columns" class="nav-link" data-scroll-target="#determine-necessary-columns">Determine Necessary Columns</a>
+  <ul class="collapse">
+  <li><a href="#step-1---build-a-tiny-test-dataset" id="toc-step-1---build-a-tiny-test-dataset" class="nav-link" data-scroll-target="#step-1---build-a-tiny-test-dataset">step 1 - build a tiny test dataset</a></li>
+  <li><a href="#step-2---verify-tiny-test-dataset" id="toc-step-2---verify-tiny-test-dataset" class="nav-link" data-scroll-target="#step-2---verify-tiny-test-dataset">step 2 - verify tiny test dataset</a></li>
+  <li><a href="#step-3---leave-one-out-test" id="toc-step-3---leave-one-out-test" class="nav-link" data-scroll-target="#step-3---leave-one-out-test">step 3 - leave-one-out test</a></li>
+  <li><a href="#step-4---examine-results" id="toc-step-4---examine-results" class="nav-link" data-scroll-target="#step-4---examine-results">step 4 - examine results</a></li>
+  <li><a href="#step-5---validate-results" id="toc-step-5---validate-results" class="nav-link" data-scroll-target="#step-5---validate-results">step 5 - validate results</a></li>
+  </ul></li>
+  <li><a href="#add-variables-needed-for-vm0045" id="toc-add-variables-needed-for-vm0045" class="nav-link" data-scroll-target="#add-variables-needed-for-vm0045">Add Variables Needed For VM0045</a></li>
+  <li><a href="#load-fiadb-tables-into-r" id="toc-load-fiadb-tables-into-r" class="nav-link" data-scroll-target="#load-fiadb-tables-into-r">Load FIADB Tables Into R</a></li>
+  <li><a href="#filter-by-plt_cn" id="toc-filter-by-plt_cn" class="nav-link" data-scroll-target="#filter-by-plt_cn">Filter by PLT_CN</a>
+  <ul class="collapse">
+  <li><a href="#determine-latest-cycle-for-each-state" id="toc-determine-latest-cycle-for-each-state" class="nav-link" data-scroll-target="#determine-latest-cycle-for-each-state">determine latest cycle for each state</a></li>
+  <li><a href="#determine-plot-visits-that-meet-selection-criteria" id="toc-determine-plot-visits-that-meet-selection-criteria" class="nav-link" data-scroll-target="#determine-plot-visits-that-meet-selection-criteria">determine plot visits that meet selection criteria</a></li>
+  <li><a href="#apply-filters" id="toc-apply-filters" class="nav-link" data-scroll-target="#apply-filters">apply filters</a></li>
+  <li><a href="#sanity-checks" id="toc-sanity-checks" class="nav-link" data-scroll-target="#sanity-checks">sanity checks</a></li>
+  </ul></li>
+  <li><a href="#save-filtered-fia-database" id="toc-save-filtered-fia-database" class="nav-link" data-scroll-target="#save-filtered-fia-database">Save Filtered FIA Database</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">—CONCLUSION—</a></li>
+  <li><a href="#appendix-using-generative-ai" id="toc-appendix-using-generative-ai" class="nav-link" data-scroll-target="#appendix-using-generative-ai">—APPENDIX: USING GENERATIVE AI—</a>
+  <ul class="collapse">
+  <li><a href="#code-writing" id="toc-code-writing" class="nav-link" data-scroll-target="#code-writing">Code Writing</a></li>
+  <li><a href="#debugging" id="toc-debugging" class="nav-link" data-scroll-target="#debugging">Debugging</a></li>
+  <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a></li>
+  <li><a href="#image-manipulation" id="toc-image-manipulation" class="nav-link" data-scroll-target="#image-manipulation">Image Manipulation</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">MODULE 2A - Loblolly pine forests: Data management &amp; filtering</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Taylan Morcol </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 16, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p><a href="index.html">← Back to module index</a></p>
+<p><strong>Disclaimer:</strong> This material was prepared on my own personal time and is offered in my personal capacity only. It does not represent the views of, nor is it endorsed by, any current or past employer.</p>
+<section id="introduction" class="level1">
+<h1>—INTRODUCTION—</h1>
+<p>In Module 1, working with a small set of FIA plots from Rhode Island, we saw how to apply some of the VM0045 donor pool selection criteria. Now, we turn our attention to the Southeastern US. Targetting a larger geographic area, we apply the full set of donor selection criteria to FIA plots in loblolly pine forests in ecological section 232J (i.e., Southern Atlantic Coastal Plains and Flatwoods section of the Outer Coastal Plain Mixed Forest province).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./images/Cleland_map_cropped_blue232J_yellowStateLinesChatGPT_20251116.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<figcaption>Ecological section 232J (blue fill) interects four US states: North Carolina, South Carolina, Georgia, and Florida. Blue fill and yellow state boundaries added for clarity. Map excerpt from Cleland et al., (2007), https://doi.org/10.2737/WO-GTR-76D.</figcaption>
+</figure>
+</div>
+<p>As seen in the map, section 232J intersects four states, each of which is substantially larger than Rhode Island. Thus, this module deals with much larger data files than the first module. As we’ll see, this requires some modifications to how we download, read in, and process the FIA data. These modifications go beyond what is presented in the <a href="https://doserlab.com/files/rfia/articles/bigdata">rFIA big data guide</a>, which is only concerned with unit-level estimation. By contrast, this module deals with more granular, plot-level estimation.</p>
+<p>Because of the added data management issues and because of the more complete treatment of the VM0045 protocol, Module 2 is broken up into multiple parts. In part A (the current part) we’ll be dealing with data management and applying donor pool selection criteria. Matching and match quality will be addressed in part B.</p>
+<p>Thus, this module approximates how one might approach generating a composite baseline for an IFM project involving loblolly pine plantings.</p>
+<section id="dr.-kincaids-169-laptop-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="dr.-kincaids-169-laptop-challenge">Dr.&nbsp;Kincaid’s $169 laptop challenge</h2>
+<p>Before we jump into coding, I want to tell you about Dr.&nbsp;Dwight Kincaid. I learned the fundamentals of coding from Dr.&nbsp;Kincaid, one of my favorite professors of all time. In his biostatistics/R class in 2018, Dr.&nbsp;Kincaid would often point out that he was doing all of his R demos on a $169 laptop. That thing must’ve had 4 GB RAM max. He wanted to teach us that one didn’t necessarily need fancy, high-powered computers to run large analyses if one learned to write efficient code.</p>
+<p>Although the laptop I’m currently using has 12 GB RAM (plus 9 GB swap), my aim is that the code in this module could still run on Dr.&nbsp;Kincaid’s $169 laptop. I do this for two reasons. First, I want this code to be accessible to a wider range of users. Second, it’s a good habit to get into for scaling to even larger datasets.</p>
+</section>
+</section>
+<section id="r-pipeline" class="level1">
+<h1>—R PIPELINE—</h1>
+<section id="load-packages" class="level2">
+<h2 class="anchored" data-anchor-id="load-packages">Load packages</h2>
+<p>In addition to some of the packages used in Module 1, Module 2A also uses <code>callr</code>. This allows us to run isolated, one-off sessions of R and pass the output to the current working session. In turn, this helps with memory management issues that come with dealing with RAM intensive processes.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># packages from Module 1</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rFIA)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maps)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># additional packages</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(callr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="download-data-from-fiadb" class="level2">
+<h2 class="anchored" data-anchor-id="download-data-from-fiadb">Download data from FIADB</h2>
+<p>This is where things start to get tricky. In Module 1, I purposefully selected a small geographic area (Rhode Island) to keep things simple and avoid having to deal with memory management. But in this module, we’re dealing with a larger dataset.</p>
+<p>The combined FIADB files download for North Carolina, South Carolina, Georgia, and Florida is a much larger size than Rhode Island, so much so that loading the data directly into memory via <code>rFIA::getFIA()</code> becomes impractical on a personal computer.</p>
+<p>We employ two strategies to deal with this:</p>
+<ol type="1">
+<li><p>Specify <code>getFIA()</code> to only download the tables required by <code>rFIA::carbon()</code>, a function used later to calculate carbon/acre. Info on required tables is found in the <a href="https://github.com/doserjef/rFIA/blob/master/R/carbonStarter.R">function definition</a> for <code>rFIA::carbonStarter</code>, an internal function that is called by <code>carbon()</code>.</p></li>
+<li><p>Specify <code>getFIA()</code> to download files to disk rather than loading into RAM.</p></li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">### SET UP DOWLOAD PARAMETERS -------------------------------------------------</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 2-letter code for each desired US state</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>states  <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NC"</span>,<span class="st">"SC"</span>,<span class="st">"GA"</span>,<span class="st">"FL"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># minimal tables required for carbon calcs</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>carb_tbls <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"PLOT"</span>, <span class="st">"TREE"</span>, <span class="st">"COND"</span>, <span class="st">"POP_PLOT_STRATUM_ASSGN"</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>               <span class="st">"POP_ESTN_UNIT"</span>, <span class="st">"POP_EVAL"</span>, <span class="st">"POP_STRATUM"</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>               <span class="st">"POP_EVAL_TYP"</span>, <span class="st">"POP_EVAL_GRP"</span>, <span class="st">"PLOTGEOM"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># file path to directory where raw FIADB csv files will be downloaded</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>dl_dir <span class="ot">&lt;-</span> <span class="st">"./data/raw/"</span> <span class="co"># CHANGE THIS TO YOUR OWN PATH               </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">### DOWNLOAD FIADB TABLES TO LOCAL DISK ---------------------------------------</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set timeout to 1 hour, otherwise R will abort longer downloads</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">timeout=</span><span class="dv">3600</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># get time just before downloads start (for benchmarking)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># download FIADB files</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>FIADB <span class="ot">&lt;-</span> <span class="fu">getFIA</span>(<span class="at">states =</span> states, <span class="co"># specify which states' data to download</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">tables =</span> carb_tbls, <span class="co"># specify which tables to download</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                <span class="at">load =</span> <span class="cn">FALSE</span>,       <span class="co"># don't load data into RAM...</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>                <span class="at">dir =</span> dl_dir)       <span class="co"># ... instead, download to specified directory</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># get time after downloads finish (for benchmarking)</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>() </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the time it took to run the downloads</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>t1 <span class="sc">-</span> t0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The downloaded csv files total about 2.8 GB, and the download took about 5.3 minutes on my laptop. Right afterwards, I ran a speed test at <a href="https://www.speedtest.net">speedtest.net</a>. My download speed during the test was about 10x faster than while downloading the FIADB files, which suggests the bottleneck may be on the FIA server side rather than my local connection.</p>
+</section>
+<section id="determine-necessary-columns" class="level2">
+<h2 class="anchored" data-anchor-id="determine-necessary-columns">Determine Necessary Columns</h2>
+<p>The next thing I did to ease the burden on computing resources was select only necessary columns when importing the tables into R for carbon calculations.</p>
+<p>FIADB tables often have tens to hundreds of columns, but <code>rFIA:carbon()</code> only needs a small handful of these. By reducing the number of columns, we can substantially reduce the size of the imported data.</p>
+<p>My first step was to point ChatGPT to the <a href="https://github.com/doserjef/rFIA/tree/master/R">rFIA source code</a> and ask it determine which columns in each of the 10 FIADB table are requried by <code>carbon()</code>. Then, I imported those tables, selected only the indicated columns, and ran <code>carbon()</code>. It failed, saying it couldn’t find a necessary column.</p>
+<p>I then asked ChatGPT to double check its list of columns against the repo and try again. Again it returned a list of columns, and again <code>carbon()</code> failed.</p>
+<p>Taking a closer look at the rFIA code, I saw that required columns are not always stated explicitly. This makes it a difficult task–even for a gen AI chatbot–to determine which columns are actually needed. (I wonder if ChatGPT would be able to work out an accurate list of required columns if provided with the fulll list of all column names to start from…) I needed a more systematic approach.</p>
+<p>I had noticed that each time <code>carbon()</code> failed, the error message named a specific column it was looking for that it couldn’t find. That gave me the idea to run a series of leave-one-out experiments. The logic goes like this: for each column in each table, leave that column out, and run <code>carbon()</code>; whenever <code>carbon()</code> fails to run, note which column was left out; for this module’s dataset and <code>carbon()</code> options, those are the columns <code>carbon()</code> cannot do without.</p>
+<section id="step-1---build-a-tiny-test-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="step-1---build-a-tiny-test-dataset">step 1 - build a tiny test dataset</h3>
+<p>The <code>carbon()</code> function can be fairly time consuming to run, depending on how much data you throw at it. Since the leave-one-out experiment calls <code>carbon()</code> hundreds of times (once for each column in each table), we want to give it the minimal amount of data needed to run the experiment.</p>
+<p><em>A priori</em>, tables with one row each should be enough. So, using the Florida csv files downloaded earlier and filtering to retain only the first row of each table, we construct a tiny data object for testing.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="do">### BUILD TINY DATASET FOR </span><span class="al">TESTING</span><span class="do"> --------------------------------------------</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># load tiny tables into memory</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">lapply</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">X =</span> carb_tbls, </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">FUN =</span> <span class="cf">function</span>(tbl){</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>              <span class="fu">readFIA</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">dir =</span> dl_dir, <span class="co"># path to csv files</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                 <span class="at">tables =</span> tbl, <span class="co"># table name</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">states =</span> <span class="st">"FL"</span>, <span class="co"># state</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">nrows =</span> <span class="dv">1</span> <span class="co"># first row from each table</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>              )[[tbl]] <span class="co"># end data.frame() and extract it from list</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>           } <span class="co"># end function()</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        ) <span class="co"># end lapply()</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(temp) <span class="ot">&lt;-</span> carb_tbls <span class="co"># add table names back in</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>FIADB_test <span class="ot">&lt;-</span> <span class="fu">c</span>(temp) <span class="co"># combine the output objects</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(FIADB_test) <span class="ot">&lt;-</span> <span class="st">"FIA.Database"</span> <span class="co"># re-assign correct class</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The last line of code assigns the class <code>FIA.Database</code> to the list in which the tables are stored. When operating on data stored in memory (as opposed to stored on disk) <code>carbon()</code> will only accept a data object of this class. DISCLAIMER: while coercing a list to class <code>FIA.Database</code> works fine for the current application, it’s possible this hack breaks some functionality is other aspects of <code>rFIA</code>.</p>
+</section>
+<section id="step-2---verify-tiny-test-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="step-2---verify-tiny-test-dataset">step 2 - verify tiny test dataset</h3>
+<p>Before running the experiment, it’s important to check if <code>carbon()</code> will actually accept tables containing just one row each.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run carbon() on tiny dataset to see if it works</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">carbon</span>(FIADB_test, <span class="at">byPlot =</span> <span class="cn">TRUE</span>, <span class="at">nCores =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 6
+# ℹ 6 variables: PLT_CN &lt;dbl&gt;, YEAR &lt;int&gt;, pltID &lt;chr&gt;, POOL &lt;chr&gt;,
+#   CARB_ACRE &lt;dbl&gt;, PROP_FOREST &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>The code runs without error, so we’re good to go on to the next step.</p>
+</section>
+<section id="step-3---leave-one-out-test" class="level3">
+<h3 class="anchored" data-anchor-id="step-3---leave-one-out-test">step 3 - leave-one-out test</h3>
+<p>The code below removes each column one at a time. For each missing column, it does carbon calculations (single core, per-plot basis) and also tries printing the object. If either <code>carbon()</code> or <code>print()</code> throw an error, it records the name of the missing column in a list. For each table, it also keeps track of the names and numbers of columns required by each function.</p>
+<p>I decided to include printing in the leave-one-out test, because printing an <code>FIA.Database</code> object requires certain table columns. I have found that manipulating <code>FIA.Database</code> objects using functions outside of <code>rFIA</code> (e.g., using <code>dplyr::select()</code>) can break certain functionalities. Printing the database is one of these. Some of these broken functionalities I’ve decided are not critical. Others, like losing the ability to easily print the database to the terminal, are harder to live without. So in the case of printing, I decided it was worthwhile to figure out which columns from which tables need to be retained.</p>
+<p>On my laptop, the code below took over 4 minutes to complete and used about 0.1 GB RAM. If desired, the time could be shortened by paralellizing either of the <code>for()</code> loops, though this could increase memory usage.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">### LEAVE-ONE-OUT </span><span class="al">TEST</span><span class="do"> --------------------------------------------------------</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>t0 <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>() <span class="co"># record time at beginning</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize list to hold names of required columns</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>req_cols_info <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">vector</span>(<span class="st">"list"</span>, <span class="fu">length</span>(carb_tbls)), carb_tbls)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize list to hold summary stats (counts)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>summary_rows <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(tbl <span class="cf">in</span> carb_tbls) { <span class="co"># being outer for() loop [by table]</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>   dt <span class="ot">&lt;-</span> FIADB_test[[tbl]] <span class="co"># extract single table/dataframe</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>   cols <span class="ot">&lt;-</span> <span class="fu">names</span>(dt) <span class="co"># extract column names</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>   <span class="co"># initialize holders for req'd col names</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>   req_carbon <span class="ot">&lt;-</span> <span class="fu">character</span>(<span class="dv">0</span>)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>   req_print  <span class="ot">&lt;-</span> <span class="fu">character</span>(<span class="dv">0</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>   <span class="cf">for</span>(col <span class="cf">in</span> cols){ <span class="co"># begin inner for() loop [by table column]</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>      db2 <span class="ot">&lt;-</span> FIADB_test <span class="co"># copy full tiny db</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      <span class="co"># replace table with dropped version</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>      db2[[tbl]] <span class="ot">&lt;-</span> dt <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">all_of</span>(col)) </span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>      <span class="co"># try running carbon() &amp; record any errors</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>      tc <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">carbon</span>(db2, <span class="at">byPlot =</span> <span class="cn">TRUE</span>, <span class="at">nCores =</span> <span class="dv">1</span>), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>      <span class="co"># try print() without printing to terminal &amp; record any errors</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>      tp <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">capture.output</span>(<span class="fu">print</span>(db2)), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>     </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>      <span class="co"># mark column as required on any error</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">inherits</span>(tc, <span class="st">"try-error"</span>)){req_carbon <span class="ot">&lt;-</span> <span class="fu">c</span>(req_carbon, col)} </span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span>(<span class="fu">inherits</span>(tp, <span class="st">"try-error"</span>)){req_print <span class="ot">&lt;-</span> <span class="fu">c</span>(req_print, col)}</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>   } <span class="co"># end inner for() loop</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>   <span class="co"># per-column flag map for this table</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>   req_map <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>      <span class="at">col =</span> cols,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>      <span class="at">req_carbon =</span> cols <span class="sc">%in%</span> req_carbon,</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>      <span class="at">req_print =</span> cols <span class="sc">%in%</span> req_print,</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>      <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>   ) <span class="co"># end data.frame()</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>   <span class="co"># add logical columns for if FIA col req'd by either</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>   req_map<span class="sc">$</span>req_any <span class="ot">&lt;-</span> req_map<span class="sc">$</span>req_carbon <span class="sc">|</span> req_map<span class="sc">$</span>req_print</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>   req_cols_info[[tbl]] <span class="ot">&lt;-</span> req_map <span class="co"># update the holder list</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>   total <span class="ot">&lt;-</span> <span class="fu">length</span>(cols) <span class="co"># total number of cols in table</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>   n_carbon <span class="ot">&lt;-</span> <span class="fu">sum</span>(req_map<span class="sc">$</span>req_carbon) <span class="co"># number of cols req'd by carbon()</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>   n_any    <span class="ot">&lt;-</span> <span class="fu">sum</span>(req_map<span class="sc">$</span>req_any) <span class="co"># number of cols req'd by either</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>   <span class="co"># add stats to summary list</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>   summary_rows[[tbl]] <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>      <span class="at">table =</span> tbl,</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>      <span class="at">req_carbon_n =</span> n_carbon,</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>      <span class="at">req_any_n =</span> n_any,</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>      <span class="at">tot_cols =</span> total,</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>      <span class="at">req_any_frac =</span> <span class="fu">sprintf</span>(<span class="st">"%d/%d"</span>, n_any, total),</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">req_any_pct =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> n_any<span class="sc">/</span>total, <span class="dv">1</span>),</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>      <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>   ) <span class="co"># end data.frame()</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>} <span class="co"># end outer for() loop</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>tot_cols   <span class="ot">&lt;-</span> <span class="fu">sum</span>(summary_rows<span class="sc">$</span>tot_cols)</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>t1 <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>() <span class="co"># record time at end</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>t1 <span class="sc">-</span> t0 <span class="co"># time to run code chunk that were generated by the leave-one-out test, so we don't have to re-run the test every time we run the script. </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="step-4---examine-results" class="level3">
+<h3 class="anchored" data-anchor-id="step-4---examine-results">step 4 - examine results</h3>
+<p>Let’s look at the column totals from the leave-one-out test.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="do">### EXAMINE RESULTS OF LEAVE-ONE-OUT </span><span class="al">TEST</span><span class="do"> -------------------------------------</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># combine rows from summary table into single dataframe</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>summary_df <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, summary_rows)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate totals across tables</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>tot_carbon <span class="ot">&lt;-</span> <span class="fu">sum</span>(summary_df<span class="sc">$</span>req_carbon_n)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>tot_any <span class="ot">&lt;-</span> <span class="fu">sum</span>(summary_df<span class="sc">$</span>req_any_n)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>tot_cols <span class="ot">&lt;-</span> <span class="fu">sum</span>(summary_df<span class="sc">$</span>tot_cols)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate totals for each column in the summary table</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>tot_row <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>   <span class="at">table =</span> <span class="st">"totals"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>   <span class="at">req_carbon_n =</span> tot_carbon,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>   <span class="at">req_any_n =</span> tot_any,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>   <span class="at">tot_cols =</span> tot_cols,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>   <span class="at">req_any_frac =</span> <span class="fu">sprintf</span>(<span class="st">"%d/%d"</span>, tot_any, tot_cols),</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>   <span class="at">req_any_pct =</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> tot_any <span class="sc">/</span> tot_cols, <span class="dv">1</span>),</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>   <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>) <span class="co"># end data.frame()</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># add totals row to bottom of summary table</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>summary_df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(summary_df, tot_row)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co"># print the full summary table</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_df, <span class="at">row.names =</span> <span class="cn">FALSE</span>, <span class="at">width =</span> <span class="dv">500</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                  table req_carbon_n req_any_n tot_cols req_any_frac req_any_pct
+                   PLOT            9         9       61         9/61        14.8
+                   TREE           10        10      196       10/196         5.1
+                   COND           10        10      151       10/151         6.6
+ POP_PLOT_STRATUM_ASSGN            5         5       12         5/12        41.7
+          POP_ESTN_UNIT            4         4       13         4/13        30.8
+               POP_EVAL            5         6       15         6/15        40.0
+            POP_STRATUM            7         8       24         8/24        33.3
+           POP_EVAL_TYP            2         2        4          2/4        50.0
+           POP_EVAL_GRP            0         0        6          0/6         0.0
+               PLOTGEOM            8         8       22         8/22        36.4
+                 totals           60        62      504       62/504        12.3</code></pre>
+</div>
+</div>
+<p>Some observations:</p>
+<ul>
+<li><p>Across the 10 tables, only 62 out 504 columns are required for both <code>carbon()</code> and <code>print()</code> to function properly. (side note: the 10 tables actually contained 524 columns total, but <code>readFIA</code> dropped 20 of them during import)</p></li>
+<li><p>At most 10 columns are required from any one table.</p></li>
+<li><p>No columns are required from the POP_EVAL_GRP table, even though it is listed as a required table in <code>rFIA</code> source code. I am not sure why this is. But <code>carbon()</code> throws an error if this table is missing altogether.</p></li>
+<li><p>TREE and COND tables have the greatest numbers of total columns.</p></li>
+<li><p>Only ~5% of columns in the TREE table are requried. This represents a substantial reduction in overall database size: among the four states in this module (i.e., FL, GA, NC, SC), the TREE table is 4-7x larger in file size than the other nine tables <em>combined</em>.</p></li>
+<li><p>Comparing <code>req_carbon_n</code> vs.&nbsp;<code>req_any_n</code>, we see that only two additional columns are needed to also make printing functional: one from POP_EVAL_GRP and one from POP_STRATUM. Given how relatively small these two tables are, the effect of adding these two additional columns on database size is negligible. NOTE: to be clear, this is not the same as saying that printing only requires two columns, but rather than printing requires only two additional columns that aren’t already required by <code>carbon()</code>.</p></li>
+</ul>
+<p>We can also view the names of the required columns:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extract required column names</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>req_col_names <span class="ot">&lt;-</span> <span class="fu">lapply</span>(req_cols_info, </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">function</span>(x){x<span class="sc">$</span>col[x<span class="sc">$</span>req_any]})</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>req_col_names <span class="co"># print required column names</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$PLOT
+[1] "CN"                   "INVYR"                "STATECD"             
+[4] "UNITCD"               "COUNTYCD"             "PLOT"                
+[7] "PLOT_STATUS_CD"       "MEASYEAR"             "MACRO_BREAKPOINT_DIA"
+
+$TREE
+ [1] "PLT_CN"    "SUBP"      "TREE"      "CONDID"    "STATUSCD"  "SPCD"     
+ [7] "DIA"       "TPA_UNADJ" "CARBON_AG" "CARBON_BG"
+
+$COND
+ [1] "PLT_CN"               "CONDID"               "COND_STATUS_CD"      
+ [4] "PROP_BASIS"           "CONDPROP_UNADJ"       "CARBON_DOWN_DEAD"    
+ [7] "CARBON_LITTER"        "CARBON_SOIL_ORG"      "CARBON_UNDERSTORY_AG"
+[10] "CARBON_UNDERSTORY_BG"
+
+$POP_PLOT_STRATUM_ASSGN
+[1] "STRATUM_CN" "PLT_CN"     "UNITCD"     "COUNTYCD"   "PLOT"      
+
+$POP_ESTN_UNIT
+[1] "CN"          "EVAL_CN"     "AREA_USED"   "P1PNTCNT_EU"
+
+$POP_EVAL
+[1] "CN"          "EVALID"      "STATECD"     "LOCATION_NM" "END_INVYR"  
+[6] "ESTN_METHOD"
+
+$POP_STRATUM
+[1] "CN"              "ESTN_UNIT_CN"    "EVALID"          "P1POINTCNT"     
+[5] "P2POINTCNT"      "ADJ_FACTOR_MACR" "ADJ_FACTOR_SUBP" "ADJ_FACTOR_MICR"
+
+$POP_EVAL_TYP
+[1] "EVAL_CN"  "EVAL_TYP"
+
+$POP_EVAL_GRP
+character(0)
+
+$PLOTGEOM
+[1] "CN"       "STATECD"  "INVYR"    "UNITCD"   "COUNTYCD" "PLOT"     "LAT"     
+[8] "LON"     </code></pre>
+</div>
+</div>
+<p>Note that each non-empty table contains at least one “CN” type of column. These are unique record identifiers and are likely also used for joins within <code>carbon()</code>.</p>
+</section>
+<section id="step-5---validate-results" class="level3">
+<h3 class="anchored" data-anchor-id="step-5---validate-results">step 5 - validate results</h3>
+<p>The last step is to construct a subset of the tiny test set that contains only the putatively required columns and to see if <code>carbon()</code> still runs without error.</p>
+<p>First, let’s filter columns on the tiny dataset and compare column counts to the unfiltered dataset, as a sanity check. The number of columns in the column-filtered dataset is what we’d expect.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># select only required columns for each table</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">names</span>(req_col_names), </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>               <span class="cf">function</span>(tbl){FIADB_test[[tbl]] <span class="sc">%&gt;%</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>                                <span class="fu">select</span>(<span class="fu">all_of</span>(req_col_names[[tbl]]))})</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(temp) <span class="ot">&lt;-</span> carb_tbls <span class="co"># add table names back in</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>FIADB_req <span class="ot">&lt;-</span> <span class="fu">c</span>(temp) <span class="co"># combine the output objects</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(FIADB_req) <span class="ot">&lt;-</span> <span class="st">"FIA.Database"</span> <span class="co"># re-assign correct class</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm for each table, compare number of columns: full vs. required</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="at">full =</span> <span class="fu">sapply</span>(FIADB_test, ncol), <span class="at">req =</span> <span class="fu">sapply</span>(FIADB_req, ncol))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       full req
+PLOT                     61   9
+TREE                    196  10
+COND                    151  10
+POP_PLOT_STRATUM_ASSGN   12   5
+POP_ESTN_UNIT            13   4
+POP_EVAL                 15   6
+POP_STRATUM              24   8
+POP_EVAL_TYP              4   2
+POP_EVAL_GRP              6   0
+PLOTGEOM                 22   8</code></pre>
+</div>
+</div>
+<p>Next, we try <code>carbon()</code> and <code>print()</code> with only the selected columns. They both run without error.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># test if carbon() still works on reduced tables</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">try</span>(rFIA<span class="sc">::</span><span class="fu">carbon</span>(FIADB_req, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">byPlot =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">nCores =</span> <span class="dv">1</span>), </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">inherits</span>(res, <span class="st">"try-error"</span>)) {</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"carbon() failed:</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">conditionMessage</span>(<span class="fu">attr</span>(res, <span class="st">"condition"</span>)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {<span class="fu">cat</span>(<span class="st">"carbon() succeeded</span><span class="sc">\n</span><span class="st">"</span>)}</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="co"># test if print() still works on reduced tables</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">capture.output</span>(<span class="fu">print</span>(FIADB_req)), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">inherits</span>(res, <span class="st">"try-error"</span>)) {</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"print() failed:</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">conditionMessage</span>(<span class="fu">attr</span>(res, <span class="st">"condition"</span>)), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {<span class="fu">cat</span>(<span class="st">"print() succeeded</span><span class="sc">\n</span><span class="st">"</span>)}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>carbon() succeeded
+print() succeeded</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="add-variables-needed-for-vm0045" class="level2">
+<h2 class="anchored" data-anchor-id="add-variables-needed-for-vm0045">Add Variables Needed For VM0045</h2>
+<p>Beyond the 62 columns we’ve selected, we need a few additional columns for VM0045 donor pool selection (this module) and baseline matching (Module 2B). Thankfully, all of these additional columns are found with the 10 FIADB tables we’ve already downloaded.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">### ADD ADDITIONAL COLUMNS FOR VM0045 -----------------------------------------</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># copy column names to new object</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>req_col_names_plus <span class="ot">&lt;-</span> req_col_names</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co"># add columns required for VM0045, using unique() to avoid duplicates</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>req_col_names_plus<span class="sc">$</span>PLOT <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>   req_col_names<span class="sc">$</span>PLOT, <span class="st">"CN"</span>, <span class="st">"STATECD"</span>, <span class="st">"PREV_PLT_CN"</span>, <span class="st">"CYCLE"</span>, </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>   <span class="st">"MEASYEAR"</span>, <span class="st">"MEASMON"</span>, <span class="st">"MEASDAY"</span>, <span class="st">"KINDCD"</span>, <span class="st">"RDDISTCD"</span>, <span class="st">"ELEV"</span>))</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>req_col_names_plus<span class="sc">$</span>COND <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>   req_col_names<span class="sc">$</span>COND, <span class="st">"PLT_CN"</span>, <span class="st">"STDORGCD"</span>, <span class="st">"FORTYPCD"</span>, <span class="st">"OWNGRPCD"</span>, </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>   <span class="st">"STDAGE"</span>, <span class="st">"SITECLCD"</span>, <span class="st">"SLOPE"</span>))</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>req_col_names_plus<span class="sc">$</span>TREE <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>   req_col_names<span class="sc">$</span>TREE, <span class="st">"PLT_CN"</span>, <span class="st">"DIA"</span>, <span class="st">"SPCD"</span>, <span class="st">"SPGRPCD"</span>, <span class="st">"STATUSCD"</span>,</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>   <span class="st">"TREECLCD"</span>))</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>req_col_names_plus<span class="sc">$</span>PLOTGEOM <span class="ot">&lt;-</span> <span class="fu">unique</span>(<span class="fu">c</span>(</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>   req_col_names<span class="sc">$</span>PLOTGEOM, <span class="st">"LON"</span>, <span class="st">"LAT"</span>, <span class="st">"ECOSUBCD"</span>))</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>req_col_names_plus<span class="sc">$</span>POP_EVAL_GRP <span class="ot">&lt;-</span> <span class="st">"CN"</span> <span class="co"># to prevent errors downstream</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="load-fiadb-tables-into-r" class="level2">
+<h2 class="anchored" data-anchor-id="load-fiadb-tables-into-r">Load FIADB Tables Into R</h2>
+<p>At this stage, we use the selected columns to load tables into R using <code>readFIA()</code>. We use <code>callr:r</code> to do the loading process in an isolated session of R, which returns unused RAM back to the OS before terminating. On my laptop, this process required about 1.4 GB RAM, whereas the final object returned was only 0.46 GB, so nearly 1 GB of unused memory was returned back to the OS.</p>
+<p>When calling <code>readFIA()</code>, one can pass additional arguments to <code>data.table::fread()</code>. which is running under the hood. One such argument is <code>select=</code>, which normally allows the user to specify which columns to read in. However, <code>readFIA()</code> already specifies the <code>drop=</code> argument, so specifying <code>select=</code> throws an error message saying that both <code>drop=</code> and <code>select=</code> cannot be specified at the same time. Trying to override the <code>readFIA()</code> default settings by specifying <code>drop=</code> explicitly also throws an error, saying that <code>drop=</code> cannot be specified twice.</p>
+<p>But as it turns out, <code>fread()</code> has a <code>colClasses=</code> arg, which takes precedence over <code>drop=</code> and <code>select=</code>. We first determine the names of the columns to drop from each table and then pass those to <code>colClasses=</code>, specifying the <code>NULL</code> class. Then, when <code>fread()</code> is working under the hood to read in data from the .csv files, it sees that all columns in the drop list have no assigned class and ignores them.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># load tables with only required columns into memory</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>FIADB <span class="ot">&lt;-</span> callr<span class="sc">::</span><span class="fu">r</span>(<span class="cf">function</span>(req_col_names_plus, </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                           req_cols_info, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                           dl_dir, </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                           states){</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">library</span>(rFIA) <span class="co"># load rFIA in the new/isolated R session</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>   fiadb <span class="ot">&lt;-</span> <span class="fu">list</span>() <span class="co"># initialize an empty list</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>   <span class="co"># loop over each table</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>   <span class="cf">for</span>(tbl <span class="cf">in</span> <span class="fu">names</span>(req_col_names_plus)){</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>      <span class="co"># names of all columns in table</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>      all_cols <span class="ot">&lt;-</span> req_cols_info[[tbl]]<span class="sc">$</span>col</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>      <span class="co"># names of requried columns in table</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>      req_cols <span class="ot">&lt;-</span> req_col_names_plus[[tbl]]</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>      <span class="co"># names of columns to drop from table</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>      drop_cols <span class="ot">&lt;-</span> all_cols[<span class="sc">!</span>all_cols <span class="sc">%in%</span> req_cols] </span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>      fiadb[[tbl]] <span class="ot">&lt;-</span> <span class="fu">readFIA</span>(<span class="at">dir =</span> dl_dir, <span class="co"># path to csv files</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>                             <span class="at">tables =</span> tbl, <span class="co"># table name</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>                             <span class="at">states =</span> states, <span class="co"># state</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>                             <span class="at">colClasses =</span> <span class="fu">list</span>(<span class="st">`</span><span class="at">NULL</span><span class="st">`</span> <span class="ot">=</span> drop_cols)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>                             )[[tbl]]} <span class="co"># end for() loop</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>   <span class="fu">class</span>(fiadb) <span class="ot">&lt;-</span> <span class="st">"FIA.Database"</span> <span class="co"># re-assign correct class</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>   <span class="fu">return</span>(fiadb) <span class="co"># return the object</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>   }, <span class="co"># end function()</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>   <span class="co"># list of objects to pass in from main session</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>   <span class="at">args =</span> <span class="fu">list</span>(<span class="at">req_col_names_plus =</span> req_col_names_plus, </span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>               <span class="at">req_cols_info =</span> req_cols_info,</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>               <span class="at">dl_dir =</span> dl_dir,</span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>               <span class="at">states =</span> states)</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>) <span class="co"># end callr::r()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As mentioned earlier, the size on disk of this reduced database is 0.46 GB.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">object.size</span>(FIADB), <span class="at">units =</span> <span class="st">"GB"</span>, <span class="at">digits =</span> <span class="dv">2</span>) <span class="co"># size of output disk</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0.46 Gb</code></pre>
+</div>
+</div>
+<p>But we’re not done filtering just yet…</p>
+</section>
+<section id="filter-by-plt_cn" class="level2">
+<h2 class="anchored" data-anchor-id="filter-by-plt_cn">Filter by PLT_CN</h2>
+<p>As we saw in the <a href="https://taylanmorcol.github.io/VM0045-FIA-demo/module_01_filtering_demo_RI.html#exploring-effects-of-filters-on-distribution-of-carbonacre-data">Module 1</a>, filtering plot visits by the donor pool selection criteria can substantially reduce the size of the dataset. In that module, we were dealing with a relatively small dataset, so we ran carbon calculations before filtering by plot visit. But since we’re dealing with a much larger dataset this time, it would be wise to filter the dataset before running <code>carbon()</code>.</p>
+<p>In Module 1, we only applied what I call the <em>absolute</em> filters, because we hadn’t selected characteristics for a sample unit. But in this module, we can also apply the three <em>relative</em> filtering criteria, because we are working with the following sample unit characteristics:</p>
+<ul>
+<li><p>Loblolly pine forest <code>FORTYPCD == 161</code></p></li>
+<li><p>Ecological section 232J (Southern Atlantic Coastal Plains and Flatwoods)</p></li>
+<li><p>Artificial regeneration - <code>STDORGCD == 1</code></p></li>
+</ul>
+<section id="determine-latest-cycle-for-each-state" class="level3">
+<h3 class="anchored" data-anchor-id="determine-latest-cycle-for-each-state">determine latest cycle for each state</h3>
+<p>As we did in Module 1, before filtering we need to manually determine the latest completed cycle, one of the <em>absolute</em> selection criteria. To do this, we can inspect a contingency table of plot vists by cycle number and state code, since cycles are determined separately for each state. We use the same reasoning as in Module 1, designating the second-to-last cycle number with completed visits for each state as the latest completed cycle.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use to determine latest COMPLETED cycle by state (for one of filters below)</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="at">CYCLE =</span> FIADB<span class="sc">$</span>PLOT<span class="sc">$</span>CYCLE, <span class="at">STATECD =</span> FIADB<span class="sc">$</span>PLOT<span class="sc">$</span>STATECD)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     STATECD
+CYCLE    12    13    37    45
+   4   5207  6712  8398  4450
+   5  11130 11820  9373  6627
+   6  12441 12015 10018  7020
+   7  13712  9495  6333  7031
+   8   7125  7327  5886  3971
+   9   7212  6429  5800  3502
+   10  7295  6628  5800  3452
+   11  5194  6686  3475  3676
+   12     0  5352     0  3676
+   13     0     0     0  1034</code></pre>
+</div>
+</div>
+<p>Based on the table above, the latest completed cycle by state code is (<code>STATECD</code>/<code>CYCLE</code>): 12/10, 13/11, 37/10, 45/12. For the current purpose, it’s not critical to know which state code corresponds to which state.</p>
+</section>
+<section id="determine-plot-visits-that-meet-selection-criteria" class="level3">
+<h3 class="anchored" data-anchor-id="determine-plot-visits-that-meet-selection-criteria">determine plot visits that meet selection criteria</h3>
+<p>There are five tables in our database that contain plot sequence numbers, c We are now ready for the next step: determining the <code>PLT_CN</code>’s (i.e., plot visits) that meet our selection criteria. We will then use those <code>PLT_CN</code>’s to filter the database down to only the visits we want.</p>
+<p>The filtering variables are found across three tables–PLOT, COND, and PLOTGEOM–so we begin by joining those. We then derive two new filtering variables: <code>meas_date</code> and <code>eco_section</code>. We apply all the filters–both <em>relative</em> and <em>absolute</em>–and the select just the <code>PLT_CN</code>’s to carry forward to the next step. These selection criteria come from VM0045, v1.2, section A1.5.1.a (pp.&nbsp;58-59).</p>
+<p>Note that in the PLOT table, <code>CN</code> is used instead of <code>PLT_CN</code>, but it’s the same thing.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">### DETERMINE PLT_CN's MEETING DONOR POOL SELECTION CRITERIA ------------------</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>PLT_CN_keep <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>PLOT <span class="sc">%&gt;%</span> <span class="co"># load FIADB object</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">inner_join</span>(FIADB<span class="sc">$</span>COND, <span class="co"># join to COND table</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"CN"</span> <span class="ot">=</span> <span class="st">"PLT_CN"</span>), </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">suffix =</span> <span class="fu">c</span>(<span class="st">""</span>,<span class="st">".y"</span>)) <span class="sc">%&gt;%</span> <span class="co"># suffix for dup columns</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>   <span class="fu">inner_join</span>(FIADB<span class="sc">$</span>PLOTGEOM, <span class="co"># join to PLOTGEOM table</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">by =</span> <span class="st">"CN"</span>, </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">suffix=</span><span class="fu">c</span>(<span class="st">""</span>,<span class="st">".y"</span>)) <span class="sc">%&gt;%</span> <span class="co"># suffix for dup columns</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(<span class="sc">-</span><span class="fu">ends_with</span>(<span class="st">".y"</span>)) <span class="sc">%&gt;%</span> <span class="co"># drop duplicate columns</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>   <span class="co"># derived variables</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">meas_date =</span> <span class="fu">as.Date</span>(<span class="fu">paste</span>(MEASYEAR, MEASMON, MEASDAY, <span class="at">sep=</span><span class="st">"-"</span>),</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>                              <span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>), </span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>          <span class="at">eco_section =</span> <span class="fu">sub</span>(<span class="st">"[a-z]$"</span>, <span class="st">""</span>, ECOSUBCD)) <span class="sc">%&gt;%</span>   </span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>   <span class="co"># apply donor pool selection filters                   </span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(<span class="sc">!</span>CN <span class="sc">%in%</span> <span class="fu">unique</span>(PREV_PLT_CN) <span class="sc">&amp;</span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>          KINDCD <span class="sc">==</span> <span class="dv">2</span> <span class="sc">&amp;</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>          ((STATECD <span class="sc">==</span> <span class="dv">12</span> <span class="sc">&amp;</span> CYCLE <span class="sc">&gt;=</span> <span class="dv">10</span>) <span class="sc">|</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>           (STATECD <span class="sc">==</span> <span class="dv">13</span> <span class="sc">&amp;</span> CYCLE <span class="sc">&gt;=</span> <span class="dv">11</span>) <span class="sc">|</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>           (STATECD <span class="sc">==</span> <span class="dv">37</span> <span class="sc">&amp;</span> CYCLE <span class="sc">&gt;=</span> <span class="dv">10</span>) <span class="sc">|</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>           (STATECD <span class="sc">==</span> <span class="dv">45</span> <span class="sc">&amp;</span> CYCLE <span class="sc">&gt;=</span> <span class="dv">12</span>)) <span class="sc">&amp;</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>          CONDPROP_UNADJ <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a>          eco_section <span class="sc">==</span> <span class="st">"232J"</span> <span class="sc">&amp;</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>          STDORGCD <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>          FORTYPCD <span class="sc">==</span> <span class="dv">161</span> <span class="sc">&amp;</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>          <span class="fu">as.Date</span> (<span class="st">"2025-11-01"</span>) <span class="sc">-</span> meas_date <span class="sc">&lt;=</span> <span class="dv">10</span> <span class="sc">*</span> <span class="fl">365.25</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(CN) <span class="sc">%&gt;%</span> <span class="co"># remove all vars except CN (i.e., PLT_CN)</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>   <span class="fu">unlist</span>() <span class="sc">%&gt;%</span> <span class="co"># convert to simple vector</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>   <span class="fu">unique</span>() <span class="co"># remove any possible duplicates</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>As we can see below, these filters reduced the number of plot visits by about three orders of magnitude.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(<span class="fu">unique</span>(FIADB<span class="sc">$</span>PLOT<span class="sc">$</span>CN))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 241302</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(PLT_CN_keep)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 249</code></pre>
+</div>
+</div>
+</section>
+<section id="apply-filters" class="level3">
+<h3 class="anchored" data-anchor-id="apply-filters">apply filters</h3>
+<p>There are five tables in our database that contain plot sequence numbers, called either <code>CN</code> or <code>PLT_CN</code> depending on the table. We apply the <code>PLT_CN</code> selection to each of these five tables.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make a copy of the database</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>FIADB_f <span class="ot">&lt;-</span> FIADB</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># filter the copied database for only PLT_CN's we want to keep</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>FIADB_f<span class="sc">$</span>PLOT <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>PLOT <span class="sc">%&gt;%</span> </span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(CN <span class="sc">%in%</span> PLT_CN_keep)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>FIADB_f<span class="sc">$</span>PLOTGEOM <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>PLOTGEOM <span class="sc">%&gt;%</span> </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(CN <span class="sc">%in%</span> PLT_CN_keep)</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>FIADB_f<span class="sc">$</span>TREE <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>TREE <span class="sc">%&gt;%</span> </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(PLT_CN <span class="sc">%in%</span> PLT_CN_keep)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>FIADB_f<span class="sc">$</span>COND <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>COND <span class="sc">%&gt;%</span> </span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(PLT_CN <span class="sc">%in%</span> PLT_CN_keep)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>FIADB_f<span class="sc">$</span>POP_PLOT_STRATUM_ASSGN <span class="ot">&lt;-</span> FIADB<span class="sc">$</span>POP_PLOT_STRATUM_ASSGN <span class="sc">%&gt;%</span> </span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>   <span class="fu">filter</span>(PLT_CN <span class="sc">%in%</span> PLT_CN_keep)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s compare the two databases in terms of size on disk.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare size on disk</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>F_sz <span class="ot">&lt;-</span> <span class="fu">object.size</span>(FIADB)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>Ff_sz <span class="ot">&lt;-</span> <span class="fu">object.size</span>(FIADB_f)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(F_sz, <span class="at">units =</span> <span class="st">"MB"</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(Ff_sz, <span class="at">units =</span> <span class="st">"MB"</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Filtering reduced file size by"</span>, </span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> (<span class="dv">1</span><span class="sc">-</span> Ff_sz<span class="sc">/</span>F_sz), <span class="dv">2</span>), <span class="st">"%</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>471.5 Mb
+1.7 Mb
+Filtering reduced file size by 99.64 %</code></pre>
+</div>
+</div>
+<p>Let’s also compare the two in terms of number of rows of data</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compare number of rows for each table</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>F_row <span class="ot">&lt;-</span> <span class="fu">sapply</span>(FIADB, nrow) </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>Ff_row <span class="ot">&lt;-</span> <span class="fu">sapply</span>(FIADB_f, nrow)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>pct_red <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span>  (<span class="dv">1</span> <span class="sc">-</span> Ff_row<span class="sc">/</span>F_row), <span class="dv">1</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cbind</span>(<span class="at">FIADB_rows =</span> F_row, </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">FIADB_f_rows =</span> Ff_row,</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">pct_reduction =</span> pct_red) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(FIADB_rows))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                       FIADB_rows FIADB_f_rows pct_reduction
+TREE                      5212900        10236          99.8
+POP_PLOT_STRATUM_ASSGN    2010877         3074          99.8
+COND                       282616          249          99.9
+PLOT                       241302          249          99.9
+PLOTGEOM                   240150          249          99.9
+POP_STRATUM                 13779        13779           0.0
+POP_ESTN_UNIT                5551         5551           0.0
+POP_EVAL_TYP                  735          735           0.0
+POP_EVAL                      402          402           0.0
+POP_EVAL_GRP                  102          102           0.0</code></pre>
+</div>
+</div>
+<p>We see that filtering the database by plot sequence numbers reduced size on disk by 99.6% (from 471 MB to 1.7 MB). And the row counts of the five largest tables by original row count were each reduced by at least 99.8% each. Note that because the other five tables don’t contain plot-visit-level data, they were not filtered. But these are also the five smallest tables by number of rows.</p>
+</section>
+<section id="sanity-checks" class="level3">
+<h3 class="anchored" data-anchor-id="sanity-checks">sanity checks</h3>
+<p>Let’s see if our filtered dataset is what we’re expecting.</p>
+<p>First, let’s show all the plot visits on a map and compare against the ecological sections map from earlier. Our points all seem to fall where we’d expect.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># confirm general layout of plots and sample unit </span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>LON <span class="ot">&lt;-</span> FIADB_f<span class="sc">$</span>PLOTGEOM<span class="sc">$</span>LON</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>LAT <span class="ot">&lt;-</span> FIADB_f<span class="sc">$</span>PLOTGEOM<span class="sc">$</span>LAT</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(LON, LAT, <span class="at">pch =</span> <span class="dv">20</span>, <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">asp =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="fu">cos</span>(<span class="fu">mean</span>(LAT, <span class="at">na.rm=</span><span class="cn">TRUE</span>) <span class="sc">*</span> pi<span class="sc">/</span><span class="dv">180</span>))</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">map</span>(<span class="st">"state"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>) <span class="co"># add state boundaries</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="cell quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="module_02A_Loblolly_DataMgmt_filtering_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./images/Cleland_map_cropped_blue232J_yellowStateLinesChatGPT_20251116.png" class="img-fluid figure-img" data-fig.height="6" data-out.width="100%" data-fig.align="center"></p>
+<figcaption>Cleland et al., 2007 map section</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Next, let’s inspect a contingency table of plot visit counts by cycle and state. It meets expectations.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"expected: </span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"STATECD 12 &amp; CYCLE \u2265 10 </span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"STATECD 13 &amp; CYCLE \u2265 11 </span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"STATECD 37 &amp; CYCLE \u2265 10 </span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"STATECD 45 &amp; CYCLE \u2265 12 </span><span class="sc">\n</span><span class="st">"</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"observed: </span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="at">CYCLE =</span> FIADB_f<span class="sc">$</span>PLOT<span class="sc">$</span>CYCLE, </span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">STATECD =</span> FIADB_f<span class="sc">$</span>PLOT<span class="sc">$</span>STATECD)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>expected: 
+ STATECD 12 &amp; CYCLE ≥ 10 
+ STATECD 13 &amp; CYCLE ≥ 11 
+ STATECD 37 &amp; CYCLE ≥ 10 
+ STATECD 45 &amp; CYCLE ≥ 12 
+ observed: 
+     STATECD
+CYCLE  12  13  37  45
+   10   0   0   8   0
+   11   1  30   5   0
+   12   0 150   0  38
+   13   0   0   0  17</code></pre>
+</div>
+</div>
+<p>Now let’s check values of the remaining filtering variables.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"unique KINDCD </span><span class="sc">\n</span><span class="st"> expected: 2 </span><span class="sc">\n</span><span class="st"> observed:"</span>, </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(FIADB_f<span class="sc">$</span>PLOT<span class="sc">$</span>KINDCD), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>unique KINDCD 
+ expected: 2 
+ observed: 2 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"unique ECOSUBCD </span><span class="sc">\n</span><span class="st"> expected: all beginning </span><span class="sc">\"</span><span class="st">232J</span><span class="sc">\"</span><span class="st"> </span><span class="sc">\n</span><span class="st"> observed:"</span>,</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(FIADB_f<span class="sc">$</span>PLOTGEOM<span class="sc">$</span>ECOSUBCD), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>unique ECOSUBCD 
+ expected: all beginning "232J" 
+ observed: 232Jf 232Je 232Ja 232Jd 232Jg 232Jb 232Jc </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"unique STDORGCD </span><span class="sc">\n</span><span class="st"> expected: 1 </span><span class="sc">\n</span><span class="st"> observed:"</span>,</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(FIADB_f<span class="sc">$</span>COND<span class="sc">$</span>STDORGCD), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>unique STDORGCD 
+ expected: 1 
+ observed: 1 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"unique FORTYPCD </span><span class="sc">\n</span><span class="st"> expected: 161 </span><span class="sc">\n</span><span class="st"> observed:"</span>,</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">unique</span>(FIADB_f<span class="sc">$</span>COND<span class="sc">$</span>FORTYPCD), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>unique FORTYPCD 
+ expected: 161 
+ observed: 161 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"unique MEASYEAR </span><span class="sc">\n</span><span class="st"> expected: all 2015 or later </span><span class="sc">\n</span><span class="st"> observed:"</span>,</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sort</span>(<span class="fu">unique</span>(FIADB_f<span class="sc">$</span>PLOT<span class="sc">$</span>MEASYEAR)), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>unique MEASYEAR 
+ expected: all 2015 or later 
+ observed: 2017 2018 2019 2020 2021 2022 2023 2024 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"range CONDPROP_UNADJ </span><span class="sc">\n</span><span class="st"> expected: 1 1 </span><span class="sc">\n</span><span class="st"> observed:"</span>,</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">range</span>(FIADB_f<span class="sc">$</span>COND<span class="sc">$</span>CONDPROP_UNADJ), <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>range CONDPROP_UNADJ 
+ expected: 1 1 
+ observed: 1 1 </code></pre>
+</div>
+</div>
+<p>They all look good.</p>
+</section>
+</section>
+<section id="save-filtered-fia-database" class="level2">
+<h2 class="anchored" data-anchor-id="save-filtered-fia-database">Save Filtered FIA Database</h2>
+<p>In this the last stage of Module 2A, we’ll save the filtered database to disk so we can easily pick up with it in part B.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># specify file path (CHANGE AS NEEDED FOR YOUR COMPUTER)</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>path_FIABD_f <span class="ot">&lt;-</span> <span class="st">"./data/Mod02A_FIADB_f.rds"</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co"># save as .rds file</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(FIADB_f, <span class="at">file =</span> path_FIABD_f)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>We see that the compressed file is about 1/5th the size of the uncompressed object. This is the beauty of compressing .rds files.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"size of FIADB object in memory: "</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">object.size</span>(FIADB_f), <span class="at">units =</span> <span class="st">"MB"</span>)</span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"size of .rds file on disk:"</span>, </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">file.info</span>(path_FIABD_f)<span class="sc">$</span>size<span class="sc">/</span>(<span class="dv">2</span><span class="sc">^</span><span class="dv">20</span>), <span class="dv">2</span>), <span class="st">"MB</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"ratio of file sizes (.rds / in-memory):"</span>, </span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">round</span>(<span class="fu">file.info</span>(path_FIABD_f)<span class="sc">$</span>size<span class="sc">/</span><span class="fu">as.numeric</span>(<span class="fu">object.size</span>(FIADB_f)), <span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>size of FIADB object in memory: 1.7 Mb
+size of .rds file on disk: 0.36 MB
+ratio of file sizes (.rds / in-memory): 0.21</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>—CONCLUSION—</h1>
+<p>In this module, we scaled up from the Rhode Island toy example from Module 1 to something closer to a real IFM use case: loblolly pine plantations in ecological section 232J, spanning North Carolina, South Carolina, Georgia, and Florida. That brought in a bigger, messier FIADB footprint and forced us to think more seriously about RAM, disk, and workflow. We walked through how to constrain <code>getFIA()</code> to only the tables that matter for <code>carbon()</code>, download them to disk instead of straight into RAM, and used Dr.&nbsp;Kincaid’s “$169 laptop” mindset as a guiding principle to write code and design data structures that can still run on a reasonably modest machine.</p>
+<p>From there, the focus shifted to paring the data down to what <code>carbon()</code> and <code>print()</code> truly need and to what VM0045 actually asks for. We built a tiny, one-row-per-table test database, ran a leave-one-out experiment over every column to identify the minimal set required by both functions, and then used that list of required columns to read in the full four-state database with only those fields. After resolving some quirks with how <code>readFIA()</code> passes arguments through to <code>fread()</code>, we loaded the reduced FIADB, applied the loblolly/section/plantation filters and state-specific cycle filters via PLT_CN, and compared sizes and row counts before and after filtering. Sanity checks on maps and key fields confirmed that the filtered object looks like what we expected. We finish by saving this smaller, compressed .rds version of the database so that Module 2B can pick up from a clean, tractable starting point.</p>
+</section>
+<section id="appendix-using-generative-ai" class="level1">
+<h1>—APPENDIX: USING GENERATIVE AI—</h1>
+<p>Throughout this project, I have been experimenting with generative AI tools (mostly ChatGPT) to help me accomplish the work. I want to share some reflections on my experience so far.</p>
+<section id="code-writing" class="level2">
+<h2 class="anchored" data-anchor-id="code-writing">Code Writing</h2>
+<p>For me, one big value proposition of AI is that it can write code faster than I can. And my overall experience with ChatGPT lately is that its code consistently works and accomplishes the task. This was not my experience a year or two ago.</p>
+<p>But I found that having ChatGPT write code for me actually cost me more time in the end. Given a minimal prompt (e.g., “write code to accomplish task X”), its code tends to be unnecessarily long, complicated, and hard to follow. I’ve found that prompting it to write “minimally viable code” to include abundant comments/explanations can help with readability. Still, I’ve found using AI generated code without thoroughly inspecting and understanding it to be problematic: when it comes time to modify the code chunk or debug other chunks, I’m either left scratching my head or relying on AI again to fix the problem.</p>
+<p>That said, I still think it’s useful as a code writer. For example, if I want to test out an idea, it can write in seconds what may take me 15 minutes, an hour, or longer to work out. Sometimes I just want to see how something would look, and I’m not sure yet if I want to include it in the final product. For this type of use, AI is great.</p>
+<p>With this approach, if I end up wanting to use an AI generated code chunk in the final product, I think a better approach is to re-write it all myself. This serves two purposes. First, I have a much better understanding of how a code chunk works when I’ve written it out myself. Second, re-writing the AI generate code myself keep a consistent style makes it easier for me to read.</p>
+</section>
+<section id="debugging" class="level2">
+<h2 class="anchored" data-anchor-id="debugging">Debugging</h2>
+<p>Where ChatGPT really shined for me was in debugging. Many times, I provided it the buggy code and some relevant context, and it consistently fixed the bugs. Though I will say, the browser interface is a little clunky for this use case. I’ve heard that using a command line version is much better for this purpose, but I haven’t tried it yet.</p>
+</section>
+<section id="troubleshooting" class="level2">
+<h2 class="anchored" data-anchor-id="troubleshooting">Troubleshooting</h2>
+<p>Another related area in which generative AI shines is troubleshooting code. I am not an R master, so there are many functionalities I don’t know about. I found ChatGPT to be very good at offering solutions to problems I was facing. One example was the issue I mentioned earlier about selecting columns with <code>readFIA()</code>; it found me the <code>colClasses =</code> solution.</p>
+<p>Another issue was getting the geographic proportions to display accurately in the plotted map points. ChatGPT gave me the trigonometric formula I used in the <code>asp=</code> arg. With this formula, the map proportions display correctly, regardless of the plotting window’s aspect ratio.</p>
+</section>
+<section id="image-manipulation" class="level2">
+<h2 class="anchored" data-anchor-id="image-manipulation">Image Manipulation</h2>
+<p>Aside from coding, I also used AI to help with image manipulation. In the original version of the Cleland map, the state boundaries are faint and hard to see. Tracing over them by hand proved a tedious and error-prone task, which I quickly abandoned. So I turned to AI.</p>
+<p>As a first attempt, I simply gave ChatGPT the image and asked it to trace over the state boundaries. It traced over some lines, but not the state boundaries. I went back and forth with it a few times to try to clarify, but it still couldn’t accomplish the task.</p>
+<p>I also tried the same thing with Gemini, Perplexity, and Claude. Gemini kept going through a loop of dropping the image and returning back to the original prompt window. This may be a glitch, I’m not sure. Perplexity, like ChatGPT, returned an image with some lines traced over, but not the state lines.</p>
+<p>Claude initially refused to produce an image, saying it didn’t know what projection was being used, etc. Even though I told it to just trace the dashed lines, it wouldn’t do it. It was encouraging to me that it refused to just take a stab at it. In the end, it said it wasn’t confident in being able to perform the task to specifications, so it instead designed a bespoke HTML-based tool to allow me to trace the lines myself. Kind of cool that it can do this, but ultimately not helpful.</p>
+<p>As second attempt, I decided to make the prompt more specific and try one-shot learning by providing an example. For each of the four chatbots, I provided the same two PNG images along with the following prompt:</p>
+<blockquote class="blockquote">
+<p>You are an expert, detail oriented graphical editor. Your task is to trace over all of the dash-dot-dash lines in the first image with a thicker, yellow line. I have provided the second image as an example of what I want to accomplish, but only a small portion of all the dash-dot-dash lines have been traced over in this example. I want you to trace over all such lines in the image in this way.</p>
+</blockquote>
+<p>ChatGPT again traced over lines that weren’t state boundaries and also distored the image in other ways. Claude apologized, saying it couldn’t directly edit raster images and gave me detailed instructions about how to accomplish the task myself (again, not helpful). Gemini did the same glitchy loop as before. And Perplexity traced the section/subsection boundaries rather than the state boundaries.</p>
+<p>I decided to give it one more try. This time, I provided a vector/SVG file of the map as the raw image, the same raster/PNG as the example, and this prompt:</p>
+<blockquote class="blockquote">
+<p>You are an expert, detail oriented graphical editor. The first image I have provided is a vector image of a map of the entire lower 48 US. The second image is a working example to help guide your work. Staring with the first image, crop it to the frame of the second image. (side note: the second image has an area filled in with blue that does not appear in the first image and a small section of a yellow line, but otherwise it was derived directly from the first image). Then trace of “all” of the dash-dot-dash lines, as I have begun to do in the example image. Then give me the output as both raster and vector images, if possible. Otherwise, give output as whatever you are able to do.</p>
+</blockquote>
+<p>Claude said SVG files aren’t supported. Gemini did the same glitchy loop. And with Perplexity, I hit my upload limit, so I wasn’t able to upload both images.</p>
+<p>ChatGPT thought for over 12 minutes…and then nailed it! Granted, it also added some small, yellow “+” artifacts, which I decided I can live with. It also did not include the blue shading for section 232J, which was in the one-shot example I gave it. But to be fair, I had not explicitly instructed it to include that shading in the output.</p>
+<p>So then I prompted it:</p>
+<blockquote class="blockquote">
+<p>This is great. All the state lines are exactly where I want them to be. Can you also add the blue shading back in from my example image?</p>
+</blockquote>
+<p>It was able to add the blue shading back in, but the yellow lines got fragmented and also extended to other, non-state boundaries, making the map unusable. So I ended up adding the blue shading back in by hand using GIMP’s fuzzy select tool.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

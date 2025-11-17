@@ -13,6 +13,6 @@ Thus, this demo is meant to illustrate how one might carry out certain aspects o
 HTML versions of the modules can be found [here](https://taylanmorcol.github.io/VM0045-FIA-demo/).
 
 ## Directory structure
-- **/docs/**: all files for GitHub webpage (including images referenced in `.qmd files`)
-- **/qmd/**: all `.qmd` source files
+- **/**: (root) all `.qmd` source files (in addition to normal root files)
+- **/docs/**: all files for GitHub webpage (including images referenced in `.qmd` files)
 - **/refs/**: literature references related to modules

@@ -1,24 +1,26 @@
 ---
 title: "VM0045 FIA demo modules"
 format: html
-output-dir: /docs
+output-file: index.html
 ---
 
 This site hosts demonstration modules showing how US Forest Service Forest
 Inventory and Analysis (FIA) data can be used within the VM0045 Improved
 Forest Management (IFM) methodology (version 1.2).
 
+**Disclaimer:** This material was prepared on my own personal time and is offered in my personal capacity only. It does not represent the views of, nor is it endorsed by, any current or past employer.
+
 # Modules
 
-- [Module 01 – Filtering FIA plots for VM0045 donor pool (Rhode Island)](module_01_filtering_demo_RI.html)
+- [Module 1 – Filtering FIA plots for VM0045 donor pool (Rhode Island)](module_01_filtering_demo_RI.html)
 
-  <!-- Add more modules here as you create them, for example:
-  - [Module 02 – Title goes here](modules/module_02_something.html)
-  -->
+- [Module 2A – Loblolly pine forests: Data management & filtering](module_02A_Loblolly_DataMgmt_filtering.html)
 
-# Links
+# Respository
 
-Repository: <https://github.com/TaylanMorcol/VM0045-FIA-demo>
+<https://github.com/TaylanMorcol/VM0045-FIA-demo>
+
+# Other links
 
 Personal webpage: <https://morcol.com>
 
